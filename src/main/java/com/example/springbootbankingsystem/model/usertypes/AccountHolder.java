@@ -1,5 +1,6 @@
 package com.example.springbootbankingsystem.model.usertypes;
 
+import com.example.springbootbankingsystem.model.accounttypes.Account;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -19,9 +20,15 @@ import java.util.List;
 public class AccountHolder extends User{
     private LocalDate dateOfBirth;
 
+    @OneToMany(mappedBy = "primaryOwner")
+    private List<Account> primaryOwner;
+
+    @OneToMany(mappedBy = "secondaryOwner")
+    private List<Account> secondaryOwner;
+
     @OneToMany(mappedBy = "accountHolderPrimary")
-    private List<PrimaryAddress> primaryAddressList = new ArrayList<>();
+    private List<PrimaryAddress> primaryAddressList;
 
     @OneToMany(mappedBy = "accountHolderMailing")
-    private List<MailingAddress> mailingAddressList = new ArrayList<>();
+    private List<MailingAddress> mailingAddressList;
 }
