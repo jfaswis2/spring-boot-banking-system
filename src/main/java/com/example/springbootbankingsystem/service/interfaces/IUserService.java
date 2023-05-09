@@ -7,4 +7,6 @@ import org.springframework.http.ResponseEntity;
 public interface IUserService {
 
     ResponseEntity<AccountHolder> addNewAccountHolder(AccountHolderDTO accountHolderDTO);
+
+    ResponseEntity<AccountHolder> getAccountHolder(Long id);
 }

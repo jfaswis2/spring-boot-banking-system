@@ -6,7 +6,7 @@ import com.example.springbootbankingsystem.model.usertypes.AccountHolder;
 import com.example.springbootbankingsystem.repository.AccountHolderRepository;
 import com.example.springbootbankingsystem.service.interfaces.IUserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +28,17 @@ public class UserServiceImpl implements IUserService {
             throw new IllegalStateException("Ya hay un email vinculado a esta cuenta");
         }
 
-        return ResponseEntity.ok(accountHolderRepository.save(accountHolderDTOMapper.map(accountHolderDTO)));
+        return new ResponseEntity<>(accountHolderRepository.save(accountHolderDTOMapper.map(accountHolderDTO)), HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<AccountHolder> getAccountHolder(Long id) {
+        Optional<AccountHolder> accountHolderOptional = accountHolderRepository
+                .findById(id);
+        if (accountHolderOptional.isEmpty()) {
+            throw new IllegalStateException("No existe una cuenta vinculada a este ID");
+        }
+
+        return new ResponseEntity<>(accountHolderOptional.get(), HttpStatus.OK);
     }
 }

@@ -21,10 +21,10 @@ public class AccountHolder extends User{
     private LocalDate dateOfBirth;
 
     @OneToMany(mappedBy = "primaryOwner")
-    private List<Account> primaryOwner;
+    private List<Account> primaryOwnerList;
 
     @OneToMany(mappedBy = "secondaryOwner")
-    private List<Account> secondaryOwner;
+    private List<Account> secondaryOwnerList;
 
     @OneToMany(mappedBy = "accountHolderPrimary")
     private List<PrimaryAddress> primaryAddressList;
