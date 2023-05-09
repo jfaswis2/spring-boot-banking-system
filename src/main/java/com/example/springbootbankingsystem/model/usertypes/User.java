@@ -1,6 +1,7 @@
 package com.example.springbootbankingsystem.model.usertypes;
 
 import com.example.springbootbankingsystem.utils.Role;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jdk.jfr.BooleanFlag;
 import lombok.Getter;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Nullable
     private Long id;
     private String name;
     private String email;

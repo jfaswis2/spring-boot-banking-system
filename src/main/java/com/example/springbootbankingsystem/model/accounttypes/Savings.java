@@ -18,7 +18,6 @@ import java.time.LocalDate;
 public class Savings extends Account {
     private String secretKey;
     private BigDecimal minimumBalance;
-    private LocalDate creationDate;
     private BigDecimal interestRate;
     private Status status;
 }

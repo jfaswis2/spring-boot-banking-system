@@ -1,6 +1,7 @@
 package com.example.springbootbankingsystem.model.usertypes;
 
 import com.example.springbootbankingsystem.model.accounttypes.Account;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity

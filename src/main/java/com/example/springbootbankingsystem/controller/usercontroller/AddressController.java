@@ -1,9 +1,8 @@
-package com.example.springbootbankingsystem.controller;
+package com.example.springbootbankingsystem.controller.usercontroller;
 
-import com.example.springbootbankingsystem.dto.MailingAddressDTO;
-import com.example.springbootbankingsystem.dto.PrimaryAddressDTO;
-import com.example.springbootbankingsystem.model.usertypes.PrimaryAddress;
-import com.example.springbootbankingsystem.service.impl.AddressServiceImpl;
+import com.example.springbootbankingsystem.dto.userdto.MailingAddressDTO;
+import com.example.springbootbankingsystem.dto.userdto.PrimaryAddressDTO;
+import com.example.springbootbankingsystem.service.impl.userimpl.AddressServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

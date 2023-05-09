@@ -1,4 +1,4 @@
-package com.example.springbootbankingsystem.dto;
+package com.example.springbootbankingsystem.dto.userdto;
 
 public record MailingAddressDTO(
         Long idAccountHolder,

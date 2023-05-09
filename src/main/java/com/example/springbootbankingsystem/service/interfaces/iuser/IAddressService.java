@@ -1,4 +1,4 @@
-package com.example.springbootbankingsystem.service.interfaces;
+package com.example.springbootbankingsystem.service.interfaces.iuser;
 
 import org.springframework.http.ResponseEntity;
 

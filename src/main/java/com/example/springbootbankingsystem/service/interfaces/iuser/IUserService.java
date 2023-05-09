@@ -1,6 +1,6 @@
-package com.example.springbootbankingsystem.service.interfaces;
+package com.example.springbootbankingsystem.service.interfaces.iuser;
 
-import com.example.springbootbankingsystem.dto.AccountHolderDTO;
+import com.example.springbootbankingsystem.dto.userdto.AccountHolderDTO;
 import com.example.springbootbankingsystem.model.usertypes.AccountHolder;
 import org.springframework.http.ResponseEntity;
 

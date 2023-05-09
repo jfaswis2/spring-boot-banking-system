@@ -1,12 +1,12 @@
-package com.example.springbootbankingsystem.service.impl;
+package com.example.springbootbankingsystem.service.impl.userimpl;
 
-import com.example.springbootbankingsystem.dto.MailingAddressDTO;
-import com.example.springbootbankingsystem.dto.PrimaryAddressDTO;
-import com.example.springbootbankingsystem.mapper.MailingAddressDTOMapper;
-import com.example.springbootbankingsystem.mapper.PrimaryAddressDTOMapper;
-import com.example.springbootbankingsystem.repository.MailingAddressRepository;
-import com.example.springbootbankingsystem.repository.PrimaryAddressRepository;
-import com.example.springbootbankingsystem.service.interfaces.IAddressService;
+import com.example.springbootbankingsystem.dto.userdto.MailingAddressDTO;
+import com.example.springbootbankingsystem.dto.userdto.PrimaryAddressDTO;
+import com.example.springbootbankingsystem.mapper.usermapper.MailingAddressDTOMapper;
+import com.example.springbootbankingsystem.mapper.usermapper.PrimaryAddressDTOMapper;
+import com.example.springbootbankingsystem.repository.userrepository.MailingAddressRepository;
+import com.example.springbootbankingsystem.repository.userrepository.PrimaryAddressRepository;
+import com.example.springbootbankingsystem.service.interfaces.iuser.IAddressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

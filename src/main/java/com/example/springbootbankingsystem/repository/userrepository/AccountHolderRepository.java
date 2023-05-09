@@ -1,4 +1,4 @@
-package com.example.springbootbankingsystem.repository;
+package com.example.springbootbankingsystem.repository.userrepository;
 
 import com.example.springbootbankingsystem.model.usertypes.AccountHolder;
 import org.springframework.data.jpa.repository.JpaRepository;

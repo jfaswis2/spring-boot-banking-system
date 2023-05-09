@@ -1,8 +1,8 @@
-package com.example.springbootbankingsystem.controller;
+package com.example.springbootbankingsystem.controller.usercontroller;
 
-import com.example.springbootbankingsystem.dto.AccountHolderDTO;
+import com.example.springbootbankingsystem.dto.userdto.AccountHolderDTO;
 import com.example.springbootbankingsystem.model.usertypes.AccountHolder;
-import com.example.springbootbankingsystem.service.impl.UserServiceImpl;
+import com.example.springbootbankingsystem.service.impl.userimpl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

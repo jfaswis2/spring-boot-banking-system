@@ -1,10 +1,10 @@
-package com.example.springbootbankingsystem.service.impl;
+package com.example.springbootbankingsystem.service.impl.userimpl;
 
-import com.example.springbootbankingsystem.dto.AccountHolderDTO;
-import com.example.springbootbankingsystem.mapper.AccountHolderDTOMapper;
+import com.example.springbootbankingsystem.dto.userdto.AccountHolderDTO;
+import com.example.springbootbankingsystem.mapper.usermapper.AccountHolderDTOMapper;
 import com.example.springbootbankingsystem.model.usertypes.AccountHolder;
-import com.example.springbootbankingsystem.repository.AccountHolderRepository;
-import com.example.springbootbankingsystem.service.interfaces.IUserService;
+import com.example.springbootbankingsystem.repository.userrepository.AccountHolderRepository;
+import com.example.springbootbankingsystem.service.interfaces.iuser.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

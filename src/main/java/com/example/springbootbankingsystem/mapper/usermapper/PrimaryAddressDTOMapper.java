@@ -1,17 +1,16 @@
-package com.example.springbootbankingsystem.mapper;
+package com.example.springbootbankingsystem.mapper.usermapper;
 
-import com.example.springbootbankingsystem.dto.PrimaryAddressDTO;
+import com.example.springbootbankingsystem.dto.userdto.PrimaryAddressDTO;
+import com.example.springbootbankingsystem.mapper.IMapper;
 import com.example.springbootbankingsystem.model.usertypes.AccountHolder;
 import com.example.springbootbankingsystem.model.usertypes.PrimaryAddress;
-import com.example.springbootbankingsystem.repository.AccountHolderRepository;
+import com.example.springbootbankingsystem.repository.userrepository.AccountHolderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Component
 @RequiredArgsConstructor
-public class PrimaryAddressDTOMapper implements IMapper<PrimaryAddressDTO, PrimaryAddress>{
+public class PrimaryAddressDTOMapper implements IMapper<PrimaryAddressDTO, PrimaryAddress> {
 
     private final AccountHolderRepository accountHolderRepository;
     @Override
