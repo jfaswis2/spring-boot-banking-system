@@ -17,6 +17,7 @@ import java.time.LocalDate;
 @Table(name = "t_checking_account")
 public class Checking extends Account {
     private String secretKey;
+    private BigDecimal balance;
     private BigDecimal minimumBalance;
     private BigDecimal monthlyMaintenanceFee;
     private LocalDate creationDate;

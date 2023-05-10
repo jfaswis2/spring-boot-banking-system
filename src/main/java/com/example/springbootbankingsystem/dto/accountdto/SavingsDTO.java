@@ -1,6 +1,7 @@
 package com.example.springbootbankingsystem.dto.accountdto;
 
 import jakarta.annotation.Nullable;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 

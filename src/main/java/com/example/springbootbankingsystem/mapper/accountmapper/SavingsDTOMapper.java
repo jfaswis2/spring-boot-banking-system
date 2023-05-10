@@ -3,7 +3,6 @@ package com.example.springbootbankingsystem.mapper.accountmapper;
 import com.example.springbootbankingsystem.dto.accountdto.SavingsDTO;
 import com.example.springbootbankingsystem.mapper.IMapper;
 import com.example.springbootbankingsystem.model.accounttypes.Savings;
-import com.example.springbootbankingsystem.model.usertypes.AccountHolder;
 import com.example.springbootbankingsystem.repository.userrepository.AccountHolderRepository;
 import com.example.springbootbankingsystem.utils.Status;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor

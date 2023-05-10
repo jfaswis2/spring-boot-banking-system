@@ -22,7 +22,9 @@ public class AccountServiceImpl implements IAccountService {
 
     @Override
     public ResponseEntity<Savings> addNewSavingAccount(SavingsDTO savingsDTO) {
+
         Savings savings = savingsDTOMapper.map(savingsDTO);
+
         if (accountHolderRepository.findById(savingsDTO.idAccountHolderPrimaryOwner()).isEmpty())
             throw new IllegalStateException("No se ha encontrado el id");
         savings.setPrimaryOwner(accountHolderRepository.findById(savingsDTO.idAccountHolderPrimaryOwner()).get());

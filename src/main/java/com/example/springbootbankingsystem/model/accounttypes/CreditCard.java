@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 @Table(name = "t_creditcard_account")
 public class CreditCard extends Account {
+    private BigDecimal balance;
     private BigDecimal creditLimit;
     private BigDecimal interestRate;
 }

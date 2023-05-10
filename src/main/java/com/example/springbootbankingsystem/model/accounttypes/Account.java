@@ -20,9 +20,7 @@ public abstract class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Nullable
     private Long id;
-    private BigDecimal balance;
     private BigDecimal penaltyFee;
     private LocalDate createdDate;
     private LocalDate updateDate;
