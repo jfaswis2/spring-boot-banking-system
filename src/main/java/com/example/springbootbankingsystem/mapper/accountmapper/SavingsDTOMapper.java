@@ -15,8 +15,6 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class SavingsDTOMapper implements IMapper<SavingsDTO, Savings> {
 
-    private final AccountHolderRepository accountHolderRepository;
-
     @Override
     public Savings map(SavingsDTO in) {
         Savings savings = new Savings();

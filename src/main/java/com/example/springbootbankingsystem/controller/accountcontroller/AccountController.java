@@ -1,7 +1,9 @@
 package com.example.springbootbankingsystem.controller.accountcontroller;
 
+import com.example.springbootbankingsystem.dto.accountdto.CreditCardDTO;
 import com.example.springbootbankingsystem.dto.accountdto.SavingsDTO;
 import com.example.springbootbankingsystem.model.accounttypes.Checking;
+import com.example.springbootbankingsystem.model.accounttypes.CreditCard;
 import com.example.springbootbankingsystem.model.accounttypes.Savings;
 import com.example.springbootbankingsystem.service.impl.accountimpl.AccountServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -21,5 +23,10 @@ public class AccountController {
     @PostMapping("/add/savings")
     public ResponseEntity<Savings> addNewSavingAccount(@RequestBody SavingsDTO savingsDTO) {
         return accountService.addNewSavingAccount(savingsDTO);
+    }
+
+    @PostMapping("/add/credit-card")
+    public ResponseEntity<CreditCard> addNewCreditCard(@RequestBody CreditCardDTO creditCardDTO) {
+        return accountService.addNewCreditCard(creditCardDTO);
     }
 }

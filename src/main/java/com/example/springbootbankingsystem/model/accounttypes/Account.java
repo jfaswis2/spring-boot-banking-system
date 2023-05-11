@@ -2,7 +2,6 @@ package com.example.springbootbankingsystem.model.accounttypes;
 
 import com.example.springbootbankingsystem.model.usertypes.AccountHolder;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
