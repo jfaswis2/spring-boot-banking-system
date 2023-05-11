@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Component
-@RequiredArgsConstructor
 public class SavingsDTOMapper implements IMapper<SavingsDTO, Savings> {
 
     @Override
@@ -21,7 +20,7 @@ public class SavingsDTOMapper implements IMapper<SavingsDTO, Savings> {
         savings.setBalance(in.balance());
         savings.setSecretKey(in.secretKey());
         savings.setInterestRate(in.interestRate());
-        savings.setPenaltyFee(BigDecimal.valueOf(0));
+        savings.setPenaltyFee(BigDecimal.valueOf(40L));
         savings.setMinimumBalance(BigDecimal.valueOf(1000));
         savings.setStatus(Status.ACTIVE);
         savings.setCreatedDate(LocalDate.now());

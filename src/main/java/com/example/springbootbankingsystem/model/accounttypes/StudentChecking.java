@@ -7,15 +7,15 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
 
 @Entity
 @Getter
 @Setter
 @RequiredArgsConstructor
 @Table(name = "t_studentchecking_account")
-public class StudentChecking extends Checking{
+public class StudentChecking extends Account {
     private String secretKey;
-    private LocalDate creationDate;
+    private BigDecimal balance;
     private Status status;
 }

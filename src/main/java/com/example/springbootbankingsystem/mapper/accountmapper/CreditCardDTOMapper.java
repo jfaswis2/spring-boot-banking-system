@@ -16,7 +16,7 @@ public class CreditCardDTOMapper implements IMapper<CreditCardDTO, CreditCard> {
         creditCard.setBalance(in.balance());
         creditCard.setInterestRate(in.interestRate());
         creditCard.setCreditLimit(in.creditLimit());
-        creditCard.setPenaltyFee(BigDecimal.valueOf(0));
+        creditCard.setPenaltyFee(BigDecimal.valueOf(40L));
         creditCard.setCreatedDate(LocalDate.now());
         creditCard.setUpdateDate(LocalDate.now());
         creditCard.setDeleted(false);

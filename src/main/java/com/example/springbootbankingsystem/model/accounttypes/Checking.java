@@ -20,6 +20,5 @@ public class Checking extends Account {
     private BigDecimal balance;
     private BigDecimal minimumBalance;
     private BigDecimal monthlyMaintenanceFee;
-    private LocalDate creationDate;
     private Status status;
 }
