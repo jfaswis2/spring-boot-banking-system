@@ -19,13 +19,16 @@ import com.example.springbootbankingsystem.repository.accountrepository.SavingsA
 import com.example.springbootbankingsystem.repository.accountrepository.StudentCheckingRepository;
 import com.example.springbootbankingsystem.repository.userrepository.AccountHolderRepository;
 import com.example.springbootbankingsystem.service.interfaces.iaccount.IAccountService;
+import com.example.springbootbankingsystem.utils.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -137,5 +140,29 @@ public class AccountServiceImpl implements IAccountService {
             studentChecking.setSecondaryOwner(null);
 
         return new ResponseEntity<>(studentCheckingRepository.save(studentChecking), HttpStatus.CREATED);
+    }
+
+    public void chargeMonthlyFee() {
+        LocalDate now = LocalDate.now();
+        List<Checking> checkingAccounts = checkingRepository.findAll();
+
+        for (Checking checking :checkingAccounts) {
+            if (checking.getLastMaintenanceFee().plusMonths(1).isBefore(now)) {
+                checking.setLastMaintenanceFee(now);
+                checking.setBalance(checking.getBalance().subtract(checking.getMonthlyMaintenanceFee()));
+            }
+
+            //Si el saldo de la cuenta es menor a 0, se congelará
+            if (checking.getBalance().compareTo(BigDecimal.ZERO) < 0) {
+                checking.setStatus(Status.FROZEN);
+            }
+
+            //Si el saldo de la cuenta es menor al mínimo saldo, se cobrara una multa
+            if (checking.getBalance().compareTo(checking.getMinimumBalance()) < 0) {
+                checking.setBalance(checking.getBalance().subtract(checking.getPenaltyFee()));
+            }
+
+            checkingRepository.save(checking);
+        }
     }
 }

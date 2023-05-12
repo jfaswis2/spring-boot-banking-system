@@ -23,6 +23,7 @@ public class CheckingDTOMapper implements IMapper<CheckingDTO, Checking> {
         checking.setStatus(Status.ACTIVE);
         checking.setCreatedDate(LocalDate.now());
         checking.setUpdateDate(LocalDate.now());
+        checking.setLastMaintenanceFee(LocalDate.now());
         checking.setDeleted(false);
 
         return checking;
