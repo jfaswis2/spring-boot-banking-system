@@ -16,7 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -59,15 +61,49 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ResponseEntity<List<AccountHolder>> getAllAccountHolder() {
         return new ResponseEntity<>(accountHolderRepository.findAll(), HttpStatus.OK);
-
     }
 
 
     //TODO añadir todas las comprobaciones
     @Override
-    public ResponseEntity<AccountHolder> updateAccountHolder(AccountHolder accountHolder) {
+    public ResponseEntity<AccountHolder> updateAccountHolder(Long id, AccountHolderDTO accountHolderDTO) {
+        AccountHolder accountHolder1 = accountHolderRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado el account holder para actualizar"));
 
-        return new ResponseEntity<>(accountHolderRepository.save(accountHolder), HttpStatus.ACCEPTED);
+        if (accountHolderDTO.name() != null &&
+                accountHolderDTO.name().length() > 0 &&
+                !Objects.equals(accountHolder1.getName(), accountHolderDTO.name())){
+            accountHolder1.setName(accountHolderDTO.name());
+        }
+
+        if (accountHolderDTO.email() != null &&
+                accountHolderDTO.email().length() > 0 &&
+                !Objects.equals(accountHolder1.getEmail(), accountHolderDTO.email())){
+
+            Optional<AccountHolder> accountHolderOptional = accountHolderRepository
+                    .findAccountHolderByEmail(accountHolderDTO.email());
+
+            if (accountHolderOptional.isPresent()) {
+                throw new IllegalStateException("El nuevo email ya ha sido tomado");
+            }
+
+            accountHolder1.setEmail(accountHolderDTO.email());
+        }
+
+        if (accountHolderDTO.password() != null &&
+                accountHolderDTO.password().length() > 0 &&
+                !Objects.equals(accountHolder1.getPassword(), accountHolderDTO.password())){
+            accountHolder1.setPassword(accountHolderDTO.password());
+        }
+
+        if (accountHolderDTO.dateOfBirth() != null &&
+                !Objects.equals(accountHolder1.getDateOfBirth(), accountHolderDTO.dateOfBirth())){
+            accountHolder1.setDateOfBirth(accountHolderDTO.dateOfBirth());
+        }
+
+        accountHolder1.setUpdateDate(LocalDate.now());
+
+        return new ResponseEntity<>(accountHolderRepository.save(accountHolder1), HttpStatus.ACCEPTED);
     }
 
     @Override

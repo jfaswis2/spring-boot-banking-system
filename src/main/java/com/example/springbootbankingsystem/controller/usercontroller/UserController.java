@@ -15,18 +15,30 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserServiceImpl userService;
 
+    //----------------------- ACCOUNT-HOLDER ------------------------
     @PostMapping("/register/account-holder")
     public ResponseEntity<AccountHolder> registerNewAccountHolder(@RequestBody AccountHolderDTO accountHolderDTO){
         return userService.addNewAccountHolder(accountHolderDTO);
-    }
-
-    @PostMapping("/register/admin")
-    public ResponseEntity<Admin> registerNewAdmin(@RequestBody AdminDTO adminDTO) {
-        return userService.addNewAdmin(adminDTO);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<AccountHolder> getAccountHolder(@PathVariable Long id) {
         return userService.getAccountHolder(id);
     }
+
+    @PutMapping("/update/account-holder/{id}")
+    public ResponseEntity<AccountHolder> updateAccountHolder(@PathVariable Long id,
+                                                             @RequestBody AccountHolderDTO accountHolderDTO) {
+        return userService.updateAccountHolder(id, accountHolderDTO);
+    }
+
+    //---------------------- ADMIN -----------------------------
+    @PostMapping("/register/admin")
+    public ResponseEntity<Admin> registerNewAdmin(@RequestBody AdminDTO adminDTO) {
+        return userService.addNewAdmin(adminDTO);
+    }
+
+    //--------------------- THIRD-PARTY -----------------------------
+
+
 }

@@ -19,7 +19,7 @@ public interface IUserService {
 
     ResponseEntity<List<AccountHolder>> getAllAccountHolder();
 
-    ResponseEntity<AccountHolder> updateAccountHolder(AccountHolder accountHolder);
+    ResponseEntity<AccountHolder> updateAccountHolder(Long id, AccountHolderDTO accountHolder);
 
     ResponseEntity<Void> deleteAccountHolder(Long id);
 
