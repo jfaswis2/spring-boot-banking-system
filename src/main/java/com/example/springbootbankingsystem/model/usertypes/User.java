@@ -18,7 +18,6 @@ import java.time.LocalDate;
 public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Nullable
     private Long id;
     private String name;
     private String email;

@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.Year;
 import java.util.List;
 
 @Service
@@ -116,7 +115,6 @@ public class AccountServiceImpl implements IAccountService {
         else
             checking.setSecondaryOwner(null);
 
-
         return new ResponseEntity<>(checkingRepository.save(checking), HttpStatus.CREATED);
     }
 
@@ -146,7 +144,7 @@ public class AccountServiceImpl implements IAccountService {
         LocalDate now = LocalDate.now();
         List<Checking> checkingAccounts = checkingRepository.findAll();
 
-        for (Checking checking :checkingAccounts) {
+        for (Checking checking :checkingAccounts) {                     //antes
             if (checking.getLastMaintenanceFee().plusMonths(1).isBefore(now)) {
                 checking.setLastMaintenanceFee(now);
                 checking.setBalance(checking.getBalance().subtract(checking.getMonthlyMaintenanceFee()));
@@ -161,6 +159,8 @@ public class AccountServiceImpl implements IAccountService {
             if (checking.getBalance().compareTo(checking.getMinimumBalance()) < 0) {
                 checking.setBalance(checking.getBalance().subtract(checking.getPenaltyFee()));
             }
+
+            checking.setUpdateDate(LocalDate.now());
 
             checkingRepository.save(checking);
         }

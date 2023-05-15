@@ -1,7 +1,9 @@
 package com.example.springbootbankingsystem.controller.usercontroller;
 
 import com.example.springbootbankingsystem.dto.userdto.AccountHolderDTO;
+import com.example.springbootbankingsystem.dto.userdto.AdminDTO;
 import com.example.springbootbankingsystem.model.usertypes.AccountHolder;
+import com.example.springbootbankingsystem.model.usertypes.Admin;
 import com.example.springbootbankingsystem.service.impl.userimpl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,11 @@ public class UserController {
     @PostMapping("/register/account-holder")
     public ResponseEntity<AccountHolder> registerNewAccountHolder(@RequestBody AccountHolderDTO accountHolderDTO){
         return userService.addNewAccountHolder(accountHolderDTO);
+    }
+
+    @PostMapping("/register/admin")
+    public ResponseEntity<Admin> registerNewAdmin(@RequestBody AdminDTO adminDTO) {
+        return userService.addNewAdmin(adminDTO);
     }
 
     @GetMapping("/{id}")
