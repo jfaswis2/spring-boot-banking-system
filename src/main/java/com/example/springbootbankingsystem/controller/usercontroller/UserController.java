@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
@@ -24,6 +26,11 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<AccountHolder> getAccountHolder(@PathVariable Long id) {
         return userService.getAccountHolder(id);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AccountHolder>> getAllAccountHolder() {
+        return userService.getAllAccountHolder();
     }
 
     @PutMapping("/update/account-holder/{id}")

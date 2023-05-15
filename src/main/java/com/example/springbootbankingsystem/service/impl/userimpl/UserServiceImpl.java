@@ -60,11 +60,9 @@ public class UserServiceImpl implements IUserService {
     //TODO cambiar a que devuelva solo los registros donde Deleted = false
     @Override
     public ResponseEntity<List<AccountHolder>> getAllAccountHolder() {
-        return new ResponseEntity<>(accountHolderRepository.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(accountHolderRepository.findAllAccountHolder(), HttpStatus.OK);
     }
 
-
-    //TODO añadir todas las comprobaciones
     @Override
     public ResponseEntity<AccountHolder> updateAccountHolder(Long id, AccountHolderDTO accountHolderDTO) {
         AccountHolder accountHolder1 = accountHolderRepository.findById(id)
