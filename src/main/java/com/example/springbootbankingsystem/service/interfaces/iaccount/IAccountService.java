@@ -15,8 +15,11 @@ public interface IAccountService {
     //--------------- ACCOUNT ----------------------
     ResponseEntity<List<Account>> getAllPrimaryOwnerAccount(Long idAccountHolder);
     ResponseEntity<List<Account>> getAllSecondaryOwnerAccount(Long idAccountHolder);
+    ResponseEntity<Account> getPrimaryOwnerAccount(Long idAccountHolder, Long idAccount);
+    ResponseEntity<Account> getSecondaryOwnerAccount(Long idAccountHolder, Long idAccount);
+    ResponseEntity<Void> deletePrimaryOwnerAccount(Long idAccountHolder);
+    ResponseEntity<Void> deleteSecondaryOwnerAccount(Long idAccountHolder);
     ResponseEntity<Void> deleteAllAccount(Long idAccountHolder);
-    ResponseEntity<Account> getAccount(Long idAccountHolder, Long idAccount);
 
     //----------------- SAVINGS -------------------------
     ResponseEntity<Savings> addNewSavingAccount(SavingsDTO savingsDTO);

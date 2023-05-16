@@ -20,32 +20,47 @@ public class AccountController {
     private final AccountServiceImpl accountService;
 
 
-    @GetMapping("/{id}")
+    //--------------------------- ACCOUNT -------------------------
+    @GetMapping("/all/primary/{id}")
     public ResponseEntity<List<Account>> getAllPrimaryOwnerAccount(@PathVariable Long id) {
         return accountService.getAllPrimaryOwnerAccount(id);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/all/secondary/{id}")
     public ResponseEntity<List<Account>> getAllSecondaryOwnerAccount(@PathVariable Long id) {
         return accountService.getAllSecondaryOwnerAccount(id);
     }
 
+    @GetMapping("/primary/{idAccountHolder}/{idAccount}")
+    public ResponseEntity<Account> getPrimaryOwnerAccount(@PathVariable Long idAccountHolder, @PathVariable Long idAccount) {
+        return accountService.getPrimaryOwnerAccount(idAccountHolder,idAccount);
+    }
 
+    @GetMapping("/secondary/{idAccountHolder}/{idAccount}")
+    public ResponseEntity<Account> getSecondaryOwnerAccount(@PathVariable Long idAccountHolder, @PathVariable Long idAccount) {
+        return accountService.getSecondaryOwnerAccount(idAccountHolder,idAccount);
+    }
+
+
+    //---------------------- SAVING -----------------------
     @PostMapping("/add/savings")
     public ResponseEntity<Savings> addNewSavingAccount(@RequestBody SavingsDTO savingsDTO) {
         return accountService.addNewSavingAccount(savingsDTO);
     }
 
+    //------------------------- CREDIT-CARD ------------------
     @PostMapping("/add/credit-card")
     public ResponseEntity<CreditCard> addNewCreditCard(@RequestBody CreditCardDTO creditCardDTO) {
         return accountService.addNewCreditCard(creditCardDTO);
     }
 
+    //------------------------- CHECKING ------------------------
     @PostMapping("/add/checking")
     public ResponseEntity<?> addNewChecking(@RequestBody CheckingDTO checkingDTO) {
         return accountService.addNewChecking(checkingDTO);
     }
 
+    //------------------------ STUDENT-CHECKING ----------------------
     @PostMapping("/add/student-checking")
     public ResponseEntity<?> addNewStudentChecking(@RequestBody StudentCheckingDTO studentCheckingDTO) {
         return accountService.addNewStudentChecking(studentCheckingDTO);

@@ -73,14 +73,46 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public ResponseEntity<Void> deleteAllAccount(Long idAccountHolder) {
+    public ResponseEntity<Account> getPrimaryOwnerAccount(Long idAccountHolder, Long idAccount) {
+        List<Account> accountList = accountHolderRepository.findById(idAccountHolder)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta de usuario con el id " + idAccountHolder))
+                .getPrimaryOwnerList();
+
+        Account account = accountList.stream()
+                .filter(account1 -> account1.getId().equals(idAccount))
+                .findFirst().orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con el id " + idAccount));
+
+        return new ResponseEntity<>(account, HttpStatus.FOUND);
+    }
+
+    @Override
+    public ResponseEntity<Account> getSecondaryOwnerAccount(Long idAccountHolder, Long idAccount) {
+        List<Account> accountList = accountHolderRepository.findById(idAccountHolder)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta de usuario con el id " + idAccountHolder))
+                .getSecondaryOwnerList();
+
+        Account account = accountList.stream()
+                .filter(account1 -> account1.getId().equals(idAccount))
+                .findFirst().orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con el id " + idAccount));
+
+        return new ResponseEntity<>(account, HttpStatus.FOUND);
+    }
+
+    @Override
+    public ResponseEntity<Void> deletePrimaryOwnerAccount(Long idAccountHolder) {
         return null;
     }
 
     @Override
-    public ResponseEntity<Account> getAccount(Long idAccountHolder, Long idAccount) {
+    public ResponseEntity<Void> deleteSecondaryOwnerAccount(Long idAccountHolder) {
         return null;
     }
+
+    @Override
+    public ResponseEntity<Void> deleteAllAccount(Long idAccountHolder) {
+        return null;
+    }
+
 
     //------------------ SAVING ---------------------
     @Override
