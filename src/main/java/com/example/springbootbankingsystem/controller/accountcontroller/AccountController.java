@@ -4,14 +4,13 @@ import com.example.springbootbankingsystem.dto.accountdto.CheckingDTO;
 import com.example.springbootbankingsystem.dto.accountdto.CreditCardDTO;
 import com.example.springbootbankingsystem.dto.accountdto.SavingsDTO;
 import com.example.springbootbankingsystem.dto.accountdto.StudentCheckingDTO;
-import com.example.springbootbankingsystem.model.accounttypes.Checking;
-import com.example.springbootbankingsystem.model.accounttypes.CreditCard;
-import com.example.springbootbankingsystem.model.accounttypes.Savings;
-import com.example.springbootbankingsystem.model.accounttypes.StudentChecking;
+import com.example.springbootbankingsystem.model.accounttypes.*;
 import com.example.springbootbankingsystem.service.impl.accountimpl.AccountServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,6 +18,18 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
 
     private final AccountServiceImpl accountService;
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<List<Account>> getAllPrimaryOwnerAccount(@PathVariable Long id) {
+        return accountService.getAllPrimaryOwnerAccount(id);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<List<Account>> getAllSecondaryOwnerAccount(@PathVariable Long id) {
+        return accountService.getAllSecondaryOwnerAccount(id);
+    }
+
 
     @PostMapping("/add/savings")
     public ResponseEntity<Savings> addNewSavingAccount(@RequestBody SavingsDTO savingsDTO) {

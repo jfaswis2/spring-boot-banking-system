@@ -39,6 +39,11 @@ public class UserController {
         return userService.updateAccountHolder(id, accountHolderDTO);
     }
 
+    @DeleteMapping("/delete/account-holder/{id}")
+    public ResponseEntity<Void> deleteAccountHolder(@PathVariable Long id) {
+        return userService.deleteAccountHolder(id);
+    }
+
     //---------------------- ADMIN -----------------------------
     @PostMapping("/register/admin")
     public ResponseEntity<Admin> registerNewAdmin(@RequestBody AdminDTO adminDTO) {

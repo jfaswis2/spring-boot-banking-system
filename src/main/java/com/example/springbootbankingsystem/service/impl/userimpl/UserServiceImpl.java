@@ -57,7 +57,6 @@ public class UserServiceImpl implements IUserService {
         return new ResponseEntity<>(accountHolderOptional.get(), HttpStatus.OK);
     }
 
-    //TODO cambiar a que devuelva solo los registros donde Deleted = false
     @Override
     public ResponseEntity<List<AccountHolder>> getAllAccountHolder() {
         return new ResponseEntity<>(accountHolderRepository.findAllAccountHolder(), HttpStatus.OK);
@@ -74,20 +73,6 @@ public class UserServiceImpl implements IUserService {
             accountHolder1.setName(accountHolderDTO.name());
         }
 
-        if (accountHolderDTO.email() != null &&
-                accountHolderDTO.email().length() > 0 &&
-                !Objects.equals(accountHolder1.getEmail(), accountHolderDTO.email())){
-
-            Optional<AccountHolder> accountHolderOptional = accountHolderRepository
-                    .findAccountHolderByEmail(accountHolderDTO.email());
-
-            if (accountHolderOptional.isPresent()) {
-                throw new IllegalStateException("El nuevo email ya ha sido tomado");
-            }
-
-            accountHolder1.setEmail(accountHolderDTO.email());
-        }
-
         if (accountHolderDTO.password() != null &&
                 accountHolderDTO.password().length() > 0 &&
                 !Objects.equals(accountHolder1.getPassword(), accountHolderDTO.password())){
@@ -97,6 +82,20 @@ public class UserServiceImpl implements IUserService {
         if (accountHolderDTO.dateOfBirth() != null &&
                 !Objects.equals(accountHolder1.getDateOfBirth(), accountHolderDTO.dateOfBirth())){
             accountHolder1.setDateOfBirth(accountHolderDTO.dateOfBirth());
+        }
+
+        if (accountHolderDTO.email() != null &&
+                accountHolderDTO.email().length() > 0 &&
+                !Objects.equals(accountHolder1.getEmail(), accountHolderDTO.email())){
+
+            Optional<AccountHolder> accountHolderOptional = accountHolderRepository
+                    .findAccountHolderByEmail(accountHolderDTO.email());
+
+            if (accountHolderOptional.isPresent()) {
+                throw new IllegalStateException("El nuevo email ya ha sido vinculado a otra cuenta");
+            }
+
+            accountHolder1.setEmail(accountHolderDTO.email());
         }
 
         accountHolder1.setUpdateDate(LocalDate.now());
@@ -110,6 +109,7 @@ public class UserServiceImpl implements IUserService {
                 .orElseThrow(() -> new IllegalStateException("No se ha encontrado una cuenta con ese ID"));
 
         accountHolder.setDeleted(true);
+
         accountHolderRepository.save(accountHolder);
         return new ResponseEntity<>(HttpStatus.OK);
     }

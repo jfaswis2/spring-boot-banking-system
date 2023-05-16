@@ -1,5 +1,6 @@
 package com.example.springbootbankingsystem.repository.userrepository;
 
+import com.example.springbootbankingsystem.model.accounttypes.Account;
 import com.example.springbootbankingsystem.model.usertypes.AccountHolder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

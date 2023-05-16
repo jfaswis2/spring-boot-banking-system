@@ -8,10 +8,7 @@ import com.example.springbootbankingsystem.mapper.accountmapper.CheckingDTOMappe
 import com.example.springbootbankingsystem.mapper.accountmapper.CreditCardDTOMapper;
 import com.example.springbootbankingsystem.mapper.accountmapper.SavingsDTOMapper;
 import com.example.springbootbankingsystem.mapper.accountmapper.StudentCheckingDTOMapper;
-import com.example.springbootbankingsystem.model.accounttypes.Checking;
-import com.example.springbootbankingsystem.model.accounttypes.CreditCard;
-import com.example.springbootbankingsystem.model.accounttypes.Savings;
-import com.example.springbootbankingsystem.model.accounttypes.StudentChecking;
+import com.example.springbootbankingsystem.model.accounttypes.*;
 import com.example.springbootbankingsystem.model.usertypes.AccountHolder;
 import com.example.springbootbankingsystem.repository.accountrepository.CheckingRepository;
 import com.example.springbootbankingsystem.repository.accountrepository.CreditCardRepository;
@@ -27,7 +24,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,8 +49,40 @@ public class AccountServiceImpl implements IAccountService {
     LocalDate fechaActual = LocalDate.now();
     LocalDate fechaMinima = fechaActual.minusYears(24);
 
+    //------------------ ACCOUNT ------------------------
+    @Override
+    public ResponseEntity<List<Account>> getAllPrimaryOwnerAccount(Long idAccountHolder) {
+        List<Account> accountList = accountHolderRepository.findById(idAccountHolder)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con el id " + idAccountHolder))
+                .getPrimaryOwnerList()
+                .stream()
+                .sorted(Comparator.comparingLong(Account::getId))
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(accountList, HttpStatus.FOUND);
+    }
 
+    @Override
+    public ResponseEntity<List<Account>> getAllSecondaryOwnerAccount(Long idAccountHolder) {
+        List<Account> accountList = accountHolderRepository.findById(idAccountHolder)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con el id " + idAccountHolder))
+                .getSecondaryOwnerList()
+                .stream()
+                .sorted(Comparator.comparingLong(Account::getId))
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(accountList, HttpStatus.FOUND);
+    }
 
+    @Override
+    public ResponseEntity<Void> deleteAllAccount(Long idAccountHolder) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Account> getAccount(Long idAccountHolder, Long idAccount) {
+        return null;
+    }
+
+    //------------------ SAVING ---------------------
     @Override
     public ResponseEntity<Savings> addNewSavingAccount(SavingsDTO savingsDTO) {
 
@@ -69,6 +100,7 @@ public class AccountServiceImpl implements IAccountService {
         return new ResponseEntity<>(savingsAccountRepository.save(savings), HttpStatus.CREATED);
     }
 
+    //--------------------- CREDIT-CARD ---------------------
     @Override
     public ResponseEntity<CreditCard> addNewCreditCard(CreditCardDTO creditCardDTO) {
         CreditCard creditCard = creditCardDTOMapper.map(creditCardDTO);
@@ -85,6 +117,7 @@ public class AccountServiceImpl implements IAccountService {
         return new ResponseEntity<>(creditCardRepository.save(creditCard), HttpStatus.CREATED);
     }
 
+    //----------------------- CHECKING --------------------------
     @Override
     public ResponseEntity<?> addNewChecking(CheckingDTO checkingDTO) {
         Checking checking = checkingDTOMapper.map(checkingDTO);
@@ -95,11 +128,9 @@ public class AccountServiceImpl implements IAccountService {
         LocalDate dateOfBirth = accountHolder.getDateOfBirth();
 
         if (!dateOfBirth.isAfter(fechaMinima)) {
-            System.out.println("Se agregará la cuenta CHECKING");
             checking.setPrimaryOwner(accountHolder);
         }
         else {
-            System.out.println("Se agregara la cuenta STUDENTCHECKING");
             StudentCheckingDTO studentCheckingDTO = StudentCheckingDTO.builder()
                     .balance(checkingDTO.balance())
                     .secretKey(checkingDTO.secretKey())
@@ -118,6 +149,7 @@ public class AccountServiceImpl implements IAccountService {
         return new ResponseEntity<>(checkingRepository.save(checking), HttpStatus.CREATED);
     }
 
+    //------------------------ STUDENT-CHECKING -------------------------
     @Override
     public ResponseEntity<?> addNewStudentChecking(StudentCheckingDTO studentCheckingDTO) {
         StudentChecking studentChecking = studentCheckingDTOMapper.map(studentCheckingDTO);
@@ -140,6 +172,8 @@ public class AccountServiceImpl implements IAccountService {
         return new ResponseEntity<>(studentCheckingRepository.save(studentChecking), HttpStatus.CREATED);
     }
 
+
+    //--------------------- OTHER -----------------------------
     public void chargeMonthlyFee() {
         LocalDate now = LocalDate.now();
         List<Checking> checkingAccounts = checkingRepository.findAll();
