@@ -3,6 +3,7 @@ package com.example.springbootbankingsystem.model.accounttypes;
 import com.example.springbootbankingsystem.model.usertypes.AccountHolder;
 import com.example.springbootbankingsystem.utils.Status;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

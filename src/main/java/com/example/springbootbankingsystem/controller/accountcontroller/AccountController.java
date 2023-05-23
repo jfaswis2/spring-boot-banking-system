@@ -6,6 +6,7 @@ import com.example.springbootbankingsystem.dto.accountdto.SavingsDTO;
 import com.example.springbootbankingsystem.dto.accountdto.StudentCheckingDTO;
 import com.example.springbootbankingsystem.model.accounttypes.*;
 import com.example.springbootbankingsystem.service.impl.accountimpl.AccountServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,31 +37,37 @@ public class AccountController {
 
     //---------------------- SAVINGS -------------------------
     @GetMapping("/all/savings/primary/{id}")
+    @Operation(summary = "Get all Primary Owner Savings")
     public ResponseEntity<List<Savings>> getAllPrimaryOwnerSavings(@PathVariable Long id) {
         return accountService.getAllPrimaryOwnerSavings(id);
     }
 
     @GetMapping("/all/savings/secondary/{id}")
+    @Operation(summary = "Get all Secondary Owner Savings")
     public ResponseEntity<List<Savings>> getAllSecondaryOwnerSavings(@PathVariable Long id) {
         return accountService.getAllSecondaryOwnerSavings(id);
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get Savings")
     public ResponseEntity<Savings> getSavings(@PathVariable Long id) {
         return accountService.getSavings(id);
     }
 
     @PostMapping("/add/savings")
+    @Operation(summary = "Add new Savings Account")
     public ResponseEntity<Savings> addNewSavingsAccount(@RequestBody SavingsDTO savingsDTO) {
         return accountService.addNewSavingAccount(savingsDTO);
     }
 
     @PutMapping("/update/savings/{id}")
+    @Operation(summary = "Update Savings Account")
     public ResponseEntity<Savings> updateSavingsAccount(@RequestBody Savings savings, @PathVariable Long id) {
         return accountService.updateSavings(id, savings);
     }
 
     @DeleteMapping("/delete/savings/{id}")
+    @Operation(summary = "Delete Savings Account")
     public ResponseEntity<Void> deleteSavingsAccount(@PathVariable Long id) {
         return accountService.deleteSavings(id);
     }
