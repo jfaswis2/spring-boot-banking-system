@@ -12,19 +12,27 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface IAccountService {
-    //--------------- ACCOUNT ----------------------
-    ResponseEntity<List<Account>> getAllPrimaryOwnerAccount(Long idAccountHolder);
-    ResponseEntity<List<Account>> getAllSecondaryOwnerAccount(Long idAccountHolder);
-    ResponseEntity<Account> getPrimaryOwnerAccount(Long idAccountHolder, Long idAccount);
-    ResponseEntity<Account> getSecondaryOwnerAccount(Long idAccountHolder, Long idAccount);
-    ResponseEntity<Void> deletePrimaryOwnerAccount(Long idAccountHolder);
-    ResponseEntity<Void> deleteSecondaryOwnerAccount(Long idAccountHolder);
-    ResponseEntity<Void> deleteAllAccount(Long idAccountHolder);
+
+    //--------------- CHECKING ----------------------
+    ResponseEntity<List<Checking>> getAllPrimaryOwnerChecking(Long idAccountHolder);
+    ResponseEntity<List<Checking>> getAllSecondaryOwnerChecking(Long idAccountHolder);
+    ResponseEntity<Checking> getPrimaryOwnerChecking(Long idChecking);
+    ResponseEntity<Checking> getSecondaryOwnerChecking(Long idChecking);
+    ResponseEntity<?> addNewChecking(CheckingDTO checkingDTO);
+    ResponseEntity<Checking> updateChecking(Checking checking);
+    ResponseEntity<Void> deleteChecking(Long idAccountHolder, Long idChecking);
+
 
     //----------------- SAVINGS -------------------------
-    ResponseEntity<Savings> addNewSavingAccount(SavingsDTO savingsDTO);
 
-    /*
+    ResponseEntity<List<Savings>> getAllPrimaryOwnerSavings(Long idAccountHolder);
+    ResponseEntity<List<Savings>> getAllSecondaryOwnerSavings(Long idAccountHolder);
+    ResponseEntity<Savings> getSavings(Long idSavings);
+    ResponseEntity<Savings> addNewSavingAccount(SavingsDTO savingsDTO);
+    ResponseEntity<Savings> updateSavings(Long id, Savings savings);
+    ResponseEntity<Void> deleteSavings(Long idChecking);
+
+/*
     ResponseEntity<Savings> getSavingAccount(Long idAccountHolder, Long idSavingAccount);
 
     ResponseEntity<List<Savings>> getAllSavingAccount(Long idAccountHolder);
@@ -32,7 +40,6 @@ public interface IAccountService {
     ResponseEntity<Savings> updateSavingAccount(Long idAccountHolder, Long idSavingAccount, AccountHolderDTO accountHolder);
 
     ResponseEntity<Void> deleteSavingAccount(Long idAccountHolder, Long idSavingAccount);
-    */
 
     //------------------- CREDIT-CARD --------------------------
     ResponseEntity<CreditCard> addNewCreditCard(CreditCardDTO creditCardDTO);
@@ -41,5 +48,5 @@ public interface IAccountService {
     ResponseEntity<?> addNewChecking(CheckingDTO checkingDTO);
 
     //---------------------- STUDENT-CHECKING -----------------------
-    ResponseEntity<?> addNewStudentChecking(StudentCheckingDTO checkingDTO);
+    ResponseEntity<?> addNewStudentChecking(StudentCheckingDTO checkingDTO);*/
 }

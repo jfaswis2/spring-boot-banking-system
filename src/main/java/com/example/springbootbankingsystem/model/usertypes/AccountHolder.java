@@ -1,6 +1,6 @@
 package com.example.springbootbankingsystem.model.usertypes;
 
-import com.example.springbootbankingsystem.model.accounttypes.Account;
+import com.example.springbootbankingsystem.model.accounttypes.*;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -21,10 +21,28 @@ public class AccountHolder extends User{
     private LocalDate dateOfBirth;
 
     @OneToMany(mappedBy = "primaryOwner")
-    private List<Account> primaryOwnerList;
+    private List<Checking> primaryOwnerCheckingList;
 
     @OneToMany(mappedBy = "secondaryOwner")
-    private List<Account> secondaryOwnerList;
+    private List<Checking> secondaryOwnerCheckingList;
+
+    @OneToMany(mappedBy = "primaryOwner")
+    private List<CreditCard> primaryOwnerCreditCardList;
+
+    @OneToMany(mappedBy = "secondaryOwner")
+    private List<CreditCard> secondaryOwnerCreditCardList;
+
+    @OneToMany(mappedBy = "primaryOwner")
+    private List<Savings> primaryOwnerSavingsList;
+
+    @OneToMany(mappedBy = "secondaryOwner")
+    private List<Savings> secondaryOwnerSavingsList;
+
+    @OneToMany(mappedBy = "primaryOwner")
+    private List<StudentChecking> primaryOwnerStudentCheckingList;
+
+    @OneToMany(mappedBy = "secondaryOwner")
+    private List<StudentChecking> secondaryOwnerStudentCheckingList;
 
     @OneToMany(mappedBy = "accountHolderPrimary")
     private List<PrimaryAddress> primaryAddressList;

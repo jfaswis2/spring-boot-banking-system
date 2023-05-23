@@ -20,17 +20,53 @@ public class AccountController {
     private final AccountServiceImpl accountService;
 
 
-    //--------------------------- ACCOUNT -------------------------
-    @GetMapping("/all/primary/{id}")
-    public ResponseEntity<List<Account>> getAllPrimaryOwnerAccount(@PathVariable Long id) {
-        return accountService.getAllPrimaryOwnerAccount(id);
+
+    //--------------------------- CHECKING -------------------------
+    /*
+    @GetMapping("/all/checking/primary/{id}")
+    public ResponseEntity<List<Checking>> getAllPrimaryOwnerChecking(@PathVariable Long id) {
+        return accountService.getAllPrimaryOwnerChecking(id);
     }
 
-    @GetMapping("/all/secondary/{id}")
-    public ResponseEntity<List<Account>> getAllSecondaryOwnerAccount(@PathVariable Long id) {
-        return accountService.getAllSecondaryOwnerAccount(id);
+    @GetMapping("/all/checking/secondary/{id}")
+    public ResponseEntity<List<Checking>> getAllSecondaryOwnerChecking(@PathVariable Long id) {
+        return accountService.getAllSecondaryOwnerChecking(id);
+    }*/
+
+
+    //---------------------- SAVINGS -------------------------
+    @GetMapping("/all/savings/primary/{id}")
+    public ResponseEntity<List<Savings>> getAllPrimaryOwnerSavings(@PathVariable Long id) {
+        return accountService.getAllPrimaryOwnerSavings(id);
     }
 
+    @GetMapping("/all/savings/secondary/{id}")
+    public ResponseEntity<List<Savings>> getAllSecondaryOwnerSavings(@PathVariable Long id) {
+        return accountService.getAllSecondaryOwnerSavings(id);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Savings> getSavings(@PathVariable Long id) {
+        return accountService.getSavings(id);
+    }
+
+    @PostMapping("/add/savings")
+    public ResponseEntity<Savings> addNewSavingsAccount(@RequestBody SavingsDTO savingsDTO) {
+        return accountService.addNewSavingAccount(savingsDTO);
+    }
+
+    @PutMapping("/update/savings/{id}")
+    public ResponseEntity<Savings> updateSavingsAccount(@RequestBody Savings savings, @PathVariable Long id) {
+        return accountService.updateSavings(id, savings);
+    }
+
+    @DeleteMapping("/delete/savings/{id}")
+    public ResponseEntity<Void> deleteSavingsAccount(@PathVariable Long id) {
+        return accountService.deleteSavings(id);
+    }
+
+
+/*
     @GetMapping("/primary/{idAccountHolder}/{idAccount}")
     public ResponseEntity<Account> getPrimaryOwnerAccount(@PathVariable Long idAccountHolder, @PathVariable Long idAccount) {
         return accountService.getPrimaryOwnerAccount(idAccountHolder,idAccount);
@@ -39,6 +75,16 @@ public class AccountController {
     @GetMapping("/secondary/{idAccountHolder}/{idAccount}")
     public ResponseEntity<Account> getSecondaryOwnerAccount(@PathVariable Long idAccountHolder, @PathVariable Long idAccount) {
         return accountService.getSecondaryOwnerAccount(idAccountHolder,idAccount);
+    }
+
+    @DeleteMapping("/delete/primary/{idAccountHolder}/{idAccount}")
+    public ResponseEntity<Void> deletePrimaryOwnerAccount(@PathVariable Long idAccountHolder, @PathVariable Long idAccount) {
+        return accountService.deletePrimaryOwnerAccount(idAccountHolder, idAccount);
+    }
+
+    @DeleteMapping("/delete/secondary/{idAccountHolder}/{idAccount}")
+    public ResponseEntity<Void> deleteSecondaryOwnerAccount(@PathVariable Long idAccountHolder, @PathVariable Long idAccount) {
+        return accountService.deleteSecondaryOwnerAccount(idAccountHolder, idAccount);
     }
 
 
@@ -64,5 +110,5 @@ public class AccountController {
     @PostMapping("/add/student-checking")
     public ResponseEntity<?> addNewStudentChecking(@RequestBody StudentCheckingDTO studentCheckingDTO) {
         return accountService.addNewStudentChecking(studentCheckingDTO);
-    }
+    }*/
 }

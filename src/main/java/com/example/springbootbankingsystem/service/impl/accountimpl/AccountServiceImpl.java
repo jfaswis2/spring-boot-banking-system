@@ -1,31 +1,27 @@
 package com.example.springbootbankingsystem.service.impl.accountimpl;
 
 import com.example.springbootbankingsystem.dto.accountdto.CheckingDTO;
-import com.example.springbootbankingsystem.dto.accountdto.CreditCardDTO;
 import com.example.springbootbankingsystem.dto.accountdto.SavingsDTO;
-import com.example.springbootbankingsystem.dto.accountdto.StudentCheckingDTO;
 import com.example.springbootbankingsystem.mapper.accountmapper.CheckingDTOMapper;
 import com.example.springbootbankingsystem.mapper.accountmapper.CreditCardDTOMapper;
 import com.example.springbootbankingsystem.mapper.accountmapper.SavingsDTOMapper;
 import com.example.springbootbankingsystem.mapper.accountmapper.StudentCheckingDTOMapper;
 import com.example.springbootbankingsystem.model.accounttypes.*;
-import com.example.springbootbankingsystem.model.usertypes.AccountHolder;
 import com.example.springbootbankingsystem.repository.accountrepository.CheckingRepository;
 import com.example.springbootbankingsystem.repository.accountrepository.CreditCardRepository;
-import com.example.springbootbankingsystem.repository.accountrepository.SavingsAccountRepository;
+import com.example.springbootbankingsystem.repository.accountrepository.SavingsRepository;
 import com.example.springbootbankingsystem.repository.accountrepository.StudentCheckingRepository;
 import com.example.springbootbankingsystem.repository.userrepository.AccountHolderRepository;
 import com.example.springbootbankingsystem.service.interfaces.iaccount.IAccountService;
-import com.example.springbootbankingsystem.utils.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,7 +30,7 @@ public class AccountServiceImpl implements IAccountService {
 
     private final AccountHolderRepository accountHolderRepository;
 
-    private final SavingsAccountRepository savingsAccountRepository;
+    private final SavingsRepository savingsRepository;
     private final SavingsDTOMapper savingsDTOMapper;
 
     private final CreditCardRepository creditCardRepository;
@@ -49,29 +45,169 @@ public class AccountServiceImpl implements IAccountService {
     LocalDate fechaActual = LocalDate.now();
     LocalDate fechaMinima = fechaActual.minusYears(24);
 
-    //------------------ ACCOUNT ------------------------
+    //------------------ CHECKING ------------------------
     @Override
-    public ResponseEntity<List<Account>> getAllPrimaryOwnerAccount(Long idAccountHolder) {
-        List<Account> accountList = accountHolderRepository.findById(idAccountHolder)
+    public ResponseEntity<List<Checking>> getAllPrimaryOwnerChecking(Long idAccountHolder) {
+        List<Checking> checkingList = accountHolderRepository.findById(idAccountHolder)
                 .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con el id " + idAccountHolder))
-                .getPrimaryOwnerList()
+                .getPrimaryOwnerCheckingList()
                 .stream()
-                .sorted(Comparator.comparingLong(Account::getId))
+                .sorted(Comparator.comparingLong(Checking::getId))
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(accountList, HttpStatus.FOUND);
+        return new ResponseEntity<>(checkingList, HttpStatus.FOUND);
+    }
+    @Override
+    public ResponseEntity<List<Checking>> getAllSecondaryOwnerChecking(Long idAccountHolder) {
+        List<Checking> checkingList = accountHolderRepository.findById(idAccountHolder)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con el id " + idAccountHolder))
+                .getSecondaryOwnerCheckingList()
+                .stream()
+                .sorted(Comparator.comparingLong(Checking::getId))
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(checkingList, HttpStatus.FOUND);
     }
 
     @Override
-    public ResponseEntity<List<Account>> getAllSecondaryOwnerAccount(Long idAccountHolder) {
-        List<Account> accountList = accountHolderRepository.findById(idAccountHolder)
-                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con el id " + idAccountHolder))
-                .getSecondaryOwnerList()
-                .stream()
-                .sorted(Comparator.comparingLong(Account::getId))
-                .collect(Collectors.toList());
-        return new ResponseEntity<>(accountList, HttpStatus.FOUND);
+    public ResponseEntity<Checking> getPrimaryOwnerChecking(Long idChecking) {
+        Checking checking = checkingRepository.findById(idChecking)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado el checking con el id " + idChecking));
+        return new ResponseEntity<>(checking, HttpStatus.FOUND);
     }
 
+    @Override
+    public ResponseEntity<Checking> getSecondaryOwnerChecking(Long idChecking) {
+        Checking checking = checkingRepository.findById(idChecking)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado el checking con el id " + idChecking));
+        return new ResponseEntity<>(checking, HttpStatus.FOUND);
+    }
+
+    @Override
+    public ResponseEntity<?> addNewChecking(CheckingDTO checkingDTO) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Checking> updateChecking(Checking checking) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteChecking(Long idAccountHolder, Long idChecking) {
+        return null;
+    }
+
+
+
+    //------------------------------- SAVINGS ----------------------------------
+
+
+    @Override
+    public ResponseEntity<List<Savings>> getAllPrimaryOwnerSavings(Long idAccountHolder) {
+        List<Savings> savingsList = accountHolderRepository.findById(idAccountHolder)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con el id " + idAccountHolder))
+                .getPrimaryOwnerSavingsList()
+                .stream()
+                .sorted(Comparator.comparingLong(Savings::getId))
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(savingsList, HttpStatus.FOUND);
+    }
+
+    @Override
+    public ResponseEntity<List<Savings>> getAllSecondaryOwnerSavings(Long idAccountHolder) {
+        List<Savings> savingsList = accountHolderRepository.findById(idAccountHolder)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con el id " + idAccountHolder))
+                .getSecondaryOwnerSavingsList()
+                .stream()
+                .sorted(Comparator.comparingLong(Savings::getId))
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(savingsList, HttpStatus.FOUND);
+    }
+
+    @Override
+    public ResponseEntity<Savings> getSavings(Long idSavings) {
+        Savings savings = savingsRepository.findById(idSavings)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado el checking con el id " + idSavings));
+        return new ResponseEntity<>(savings, HttpStatus.FOUND);
+    }
+
+    @Override
+    public ResponseEntity<Savings> addNewSavingAccount(SavingsDTO savingsDTO) {
+
+        Savings savings = savingsDTOMapper.map(savingsDTO);
+
+        if (accountHolderRepository.findById(savingsDTO.idAccountHolderPrimaryOwner()).isEmpty())
+            throw new IllegalStateException("No se ha encontrado el id de la cuenta primaria");
+        savings.setPrimaryOwner(accountHolderRepository.findById(savingsDTO.idAccountHolderPrimaryOwner()).get());
+
+        if (savingsDTO.idAccountHolderSecondaryOwner() != null && accountHolderRepository.findById(savingsDTO.idAccountHolderSecondaryOwner()).isPresent())
+            savings.setSecondaryOwner(accountHolderRepository.findById(savingsDTO.idAccountHolderSecondaryOwner()).get());
+        else
+            savings.setSecondaryOwner(null);
+
+        return new ResponseEntity<>(savingsRepository.save(savings), HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<Savings> updateSavings(Long id, Savings savings) {
+        Savings savings1 = savingsRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado el savings para actualizar"));
+
+        if (savings.getBalance() != null &&
+                !Objects.equals(savings1.getBalance(), savings.getBalance())){
+            savings1.setBalance(savings.getBalance());
+        }
+
+        if (savings.getSecretKey() != null &&
+                savings.getSecretKey().length() > 0 &&
+                !Objects.equals(savings1.getSecretKey(), savings.getSecretKey())){
+            savings1.setSecretKey(savings.getSecretKey());
+        }
+
+        if (savings.getStatus() != null &&
+                !Objects.equals(savings1.getStatus(), savings.getStatus())){
+            savings1.setStatus(savings.getStatus());
+        }
+
+        if (savings.getPenaltyFee() != null &&
+                !Objects.equals(savings1.getPenaltyFee(), savings.getPenaltyFee())){
+            savings1.setPenaltyFee(savings.getPenaltyFee());
+        }
+
+        if (savings.getCreatedDate() != null &&
+                !Objects.equals(savings1.getCreatedDate(), savings.getCreatedDate())){
+            savings1.setCreatedDate(savings.getCreatedDate());
+        }
+
+        if (savings.getUpdateDate() != null &&
+                !Objects.equals(savings1.getUpdateDate(), savings.getUpdateDate())){
+            savings1.setUpdateDate(savings.getUpdateDate());
+        }
+
+        if (savings1.isDeleted() != savings.isDeleted()){
+            savings1.setStatus(savings.getStatus());
+        }
+
+        if (savings.getMinimumBalance() != null &&
+                !Objects.equals(savings1.getMinimumBalance(), savings.getMinimumBalance())){
+            savings1.setMinimumBalance(savings.getMinimumBalance());
+        }
+
+        if (savings.getInterestRate() != null &&
+                !Objects.equals(savings1.getInterestRate(), savings.getInterestRate())){
+            savings1.setInterestRate(savings.getInterestRate());
+        }
+
+        return new ResponseEntity<>(savingsRepository.save(savings1), HttpStatus.ACCEPTED);
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteSavings(Long idChecking) {
+        if (savingsRepository.findById(idChecking).isPresent())
+            savingsRepository.deleteById(idChecking);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+/*
     @Override
     public ResponseEntity<Account> getPrimaryOwnerAccount(Long idAccountHolder, Long idAccount) {
         List<Account> accountList = accountHolderRepository.findById(idAccountHolder)
@@ -98,21 +234,39 @@ public class AccountServiceImpl implements IAccountService {
         return new ResponseEntity<>(account, HttpStatus.FOUND);
     }
 
+    //TODO terminar
     @Override
-    public ResponseEntity<Void> deletePrimaryOwnerAccount(Long idAccountHolder) {
+    public ResponseEntity<Void> deletePrimaryOwnerAccount(Long idAccountHolder, Long idAccount) {
+        AccountHolder accountHolder = accountHolderRepository.findById(idAccountHolder)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta de usuario con el id " + idAccountHolder));
+
+        List<Account> accountList = accountHolder.getPrimaryOwnerList();
+
+        Account account = accountList.stream()
+                .filter(account1 -> account1.getId().equals(idAccount))
+                .findFirst().orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con el id " + idAccount));
+
+        accountList.remove(accountList.indexOf(account));
+        accountHolder.setPrimaryOwnerList(accountList);
+        accountHolderRepository.save(accountHolder);
+
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteSecondaryOwnerAccount(Long idAccountHolder, Long idAccount) {
         return null;
     }
 
     @Override
-    public ResponseEntity<Void> deleteSecondaryOwnerAccount(Long idAccountHolder) {
+    public ResponseEntity<Void> deleteAllPrimaryOwnerAccount(Long idAccountHolder) {
         return null;
     }
 
     @Override
-    public ResponseEntity<Void> deleteAllAccount(Long idAccountHolder) {
+    public ResponseEntity<Void> deleteAllSecondaryOwnerAccount(Long idAccountHolder) {
         return null;
     }
-
 
     //------------------ SAVING ---------------------
     @Override
@@ -230,5 +384,5 @@ public class AccountServiceImpl implements IAccountService {
 
             checkingRepository.save(checking);
         }
-    }
+    }*/
 }

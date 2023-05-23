@@ -11,10 +11,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 @RequiredArgsConstructor
 public class SchedulerConfig {
     private final AccountServiceImpl accountService;
-
+/*
     @Scheduled(cron = "0 0 0 * * *")
     public void chargeMonthlyFee() {
         accountService.chargeMonthlyFee();
-    }
+    }*/
 
 }

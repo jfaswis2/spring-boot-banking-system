@@ -10,21 +10,18 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Entity
+//@Entity
 @Getter
 @Setter
 @RequiredArgsConstructor
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class Account {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+//@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public class Account {
     private BigDecimal penaltyFee;
     private LocalDate createdDate;
     private LocalDate updateDate;
     private boolean isDeleted;
 
+    /*
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "primary_owner_id")
@@ -34,4 +31,6 @@ public abstract class Account {
     @JsonIgnore
     @JoinColumn(name = "secondary_owner_id")
     private AccountHolder secondaryOwner;
+    */
+
 }
