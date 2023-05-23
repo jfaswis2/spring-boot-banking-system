@@ -20,33 +20,29 @@ public interface IAccountService {
     ResponseEntity<Checking> getSecondaryOwnerChecking(Long idChecking);
     ResponseEntity<?> addNewChecking(CheckingDTO checkingDTO);
     ResponseEntity<Checking> updateChecking(Checking checking);
-    ResponseEntity<Void> deleteChecking(Long idAccountHolder, Long idChecking);
-
-
-    //----------------- SAVINGS -------------------------
-
-    ResponseEntity<List<Savings>> getAllPrimaryOwnerSavings(Long idAccountHolder);
-    ResponseEntity<List<Savings>> getAllSecondaryOwnerSavings(Long idAccountHolder);
-    ResponseEntity<Savings> getSavings(Long idSavings);
-    ResponseEntity<Savings> addNewSavingAccount(SavingsDTO savingsDTO);
-    ResponseEntity<Savings> updateSavings(Long id, Savings savings);
-    ResponseEntity<Void> deleteSavings(Long idChecking);
-
-/*
-    ResponseEntity<Savings> getSavingAccount(Long idAccountHolder, Long idSavingAccount);
-
-    ResponseEntity<List<Savings>> getAllSavingAccount(Long idAccountHolder);
-
-    ResponseEntity<Savings> updateSavingAccount(Long idAccountHolder, Long idSavingAccount, AccountHolderDTO accountHolder);
-
-    ResponseEntity<Void> deleteSavingAccount(Long idAccountHolder, Long idSavingAccount);
-
-    //------------------- CREDIT-CARD --------------------------
-    ResponseEntity<CreditCard> addNewCreditCard(CreditCardDTO creditCardDTO);
-
-    //---------------------- CHECKING ---------------------------
-    ResponseEntity<?> addNewChecking(CheckingDTO checkingDTO);
+    ResponseEntity<Void> deleteChecking(Long idChecking);
 
     //---------------------- STUDENT-CHECKING -----------------------
-    ResponseEntity<?> addNewStudentChecking(StudentCheckingDTO checkingDTO);*/
+    ResponseEntity<List<StudentChecking>> getAllPrimaryOwnerStudentChecking(Long idAccountHolder);
+    ResponseEntity<List<StudentChecking>> getAllSecondaryOwnerStudentChecking(Long idAccountHolder);
+    ResponseEntity<StudentChecking> getStudentChecking(Long idStudentChecking);
+    ResponseEntity<?> addNewStudentChecking(StudentCheckingDTO checkingDTO);
+    ResponseEntity<StudentChecking> updateStudentChecking(Long id, StudentChecking studentChecking);
+    ResponseEntity<Void> deleteStudentChecking(Long idStudentChecking);
+
+    //----------------- SAVINGS -------------------------
+    ResponseEntity<List<Savings>> getAllPrimaryOwnerSavings(Long idAccountHolder);
+    ResponseEntity<List<Savings>> getAllSecondaryOwnerSavings(Long idAccountHolder);
+    ResponseEntity<Savings> getSavingsAccount(Long idSavings);
+    ResponseEntity<Savings> addNewSavingAccount(SavingsDTO savingsDTO);
+    ResponseEntity<Savings> updateSavingsAccount(Long id, Savings savings);
+    ResponseEntity<Void> deleteSavingsAccount(Long idChecking);
+
+    //------------------- CREDIT-CARD --------------------------
+    ResponseEntity<List<CreditCard>> getAllPrimaryOwnerCreditCard(Long idAccountHolder);
+    ResponseEntity<List<CreditCard>> getAllSecondaryOwnerCreditCard(Long idAccountHolder);
+    ResponseEntity<CreditCard> getCreditCardAccount(Long idCreditCard);
+    ResponseEntity<CreditCard> addNewCreditCardAccount(CreditCardDTO creditCardDTO);
+    ResponseEntity<CreditCard> updateCreditCardAccount(Long id, CreditCard creditCard);
+    ResponseEntity<Void> deleteCreditCardAccount(Long idCreditCard);
 }

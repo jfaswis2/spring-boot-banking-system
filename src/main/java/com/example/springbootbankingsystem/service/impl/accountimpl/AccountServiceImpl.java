@@ -1,7 +1,9 @@
 package com.example.springbootbankingsystem.service.impl.accountimpl;
 
 import com.example.springbootbankingsystem.dto.accountdto.CheckingDTO;
+import com.example.springbootbankingsystem.dto.accountdto.CreditCardDTO;
 import com.example.springbootbankingsystem.dto.accountdto.SavingsDTO;
+import com.example.springbootbankingsystem.dto.accountdto.StudentCheckingDTO;
 import com.example.springbootbankingsystem.mapper.accountmapper.CheckingDTOMapper;
 import com.example.springbootbankingsystem.mapper.accountmapper.CreditCardDTOMapper;
 import com.example.springbootbankingsystem.mapper.accountmapper.SavingsDTOMapper;
@@ -45,7 +47,7 @@ public class AccountServiceImpl implements IAccountService {
     LocalDate fechaActual = LocalDate.now();
     LocalDate fechaMinima = fechaActual.minusYears(24);
 
-    //------------------ CHECKING ------------------------
+    //------------------ CHECKING ------------------------ TODO
     @Override
     public ResponseEntity<List<Checking>> getAllPrimaryOwnerChecking(Long idAccountHolder) {
         List<Checking> checkingList = accountHolderRepository.findById(idAccountHolder)
@@ -92,15 +94,42 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public ResponseEntity<Void> deleteChecking(Long idAccountHolder, Long idChecking) {
+    public ResponseEntity<Void> deleteChecking(Long idChecking) {
         return null;
     }
 
+    //----------------------- STUDENT-CHECKING -------------------------- TODO
+    @Override
+    public ResponseEntity<List<StudentChecking>> getAllPrimaryOwnerStudentChecking(Long idAccountHolder) {
+        return null;
+    }
 
+    @Override
+    public ResponseEntity<List<StudentChecking>> getAllSecondaryOwnerStudentChecking(Long idAccountHolder) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<StudentChecking> getStudentChecking(Long idStudentChecking) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> addNewStudentChecking(StudentCheckingDTO checkingDTO) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<StudentChecking> updateStudentChecking(Long id, StudentChecking studentChecking) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteStudentChecking(Long idStudentChecking) {
+        return null;
+    }
 
     //------------------------------- SAVINGS ----------------------------------
-
-
     @Override
     public ResponseEntity<List<Savings>> getAllPrimaryOwnerSavings(Long idAccountHolder) {
         List<Savings> savingsList = accountHolderRepository.findById(idAccountHolder)
@@ -124,7 +153,7 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public ResponseEntity<Savings> getSavings(Long idSavings) {
+    public ResponseEntity<Savings> getSavingsAccount(Long idSavings) {
         Savings savings = savingsRepository.findById(idSavings)
                 .orElseThrow(() -> new IllegalStateException("No se ha encontrado el checking con el id " + idSavings));
         return new ResponseEntity<>(savings, HttpStatus.FOUND);
@@ -132,14 +161,14 @@ public class AccountServiceImpl implements IAccountService {
 
     @Override
     public ResponseEntity<Savings> addNewSavingAccount(SavingsDTO savingsDTO) {
-
         Savings savings = savingsDTOMapper.map(savingsDTO);
 
         if (accountHolderRepository.findById(savingsDTO.idAccountHolderPrimaryOwner()).isEmpty())
             throw new IllegalStateException("No se ha encontrado el id de la cuenta primaria");
         savings.setPrimaryOwner(accountHolderRepository.findById(savingsDTO.idAccountHolderPrimaryOwner()).get());
 
-        if (savingsDTO.idAccountHolderSecondaryOwner() != null && accountHolderRepository.findById(savingsDTO.idAccountHolderSecondaryOwner()).isPresent())
+        if (savingsDTO.idAccountHolderSecondaryOwner() != null && accountHolderRepository
+                .findById(savingsDTO.idAccountHolderSecondaryOwner()).isPresent())
             savings.setSecondaryOwner(accountHolderRepository.findById(savingsDTO.idAccountHolderSecondaryOwner()).get());
         else
             savings.setSecondaryOwner(null);
@@ -148,7 +177,7 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public ResponseEntity<Savings> updateSavings(Long id, Savings savings) {
+    public ResponseEntity<Savings> updateSavingsAccount(Long id, Savings savings) {
         Savings savings1 = savingsRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("No se ha encontrado el savings para actualizar"));
 
@@ -201,9 +230,108 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public ResponseEntity<Void> deleteSavings(Long idChecking) {
-        if (savingsRepository.findById(idChecking).isPresent())
-            savingsRepository.deleteById(idChecking);
+    public ResponseEntity<Void> deleteSavingsAccount(Long idChecking) {
+        if (savingsRepository.findById(idChecking).isEmpty())
+            throw new IllegalStateException("No se ha encontrado el Credit-Card con el ID: " + idChecking);
+        savingsRepository.deleteById(idChecking);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    //-------------------- CREDIT-CARD ---------------------------
+    @Override
+    public ResponseEntity<List<CreditCard>> getAllPrimaryOwnerCreditCard(Long idAccountHolder) {
+        List<CreditCard> creditCardList = accountHolderRepository.findById(idAccountHolder)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con el id " + idAccountHolder))
+                .getPrimaryOwnerCreditCardList()
+                .stream()
+                .sorted(Comparator.comparingLong(CreditCard::getId))
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(creditCardList, HttpStatus.FOUND);
+    }
+
+    @Override
+    public ResponseEntity<List<CreditCard>> getAllSecondaryOwnerCreditCard(Long idAccountHolder) {
+        List<CreditCard> creditCardList = accountHolderRepository.findById(idAccountHolder)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con el id " + idAccountHolder))
+                .getSecondaryOwnerCreditCardList()
+                .stream()
+                .sorted(Comparator.comparingLong(CreditCard::getId))
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(creditCardList, HttpStatus.FOUND);
+    }
+
+    @Override
+    public ResponseEntity<CreditCard> getCreditCardAccount(Long idCreditCard) {
+        CreditCard creditCard = creditCardRepository.findById(idCreditCard)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado el checking con el id " + idCreditCard));
+        return new ResponseEntity<>(creditCard, HttpStatus.FOUND);
+    }
+
+    @Override
+    public ResponseEntity<CreditCard> addNewCreditCardAccount(CreditCardDTO creditCardDTO) {
+        CreditCard creditCard = creditCardDTOMapper.map(creditCardDTO);
+
+        if (accountHolderRepository.findById(creditCardDTO.idAccountHolderPrimaryOwner()).isEmpty())
+            throw new IllegalStateException("No se ha encontrado el id de la cuenta primaria");
+        creditCard.setPrimaryOwner(accountHolderRepository.findById(creditCardDTO.idAccountHolderPrimaryOwner()).get());
+
+        if (creditCardDTO.idAccountHolderSecondaryOwner() != null && accountHolderRepository
+                .findById(creditCardDTO.idAccountHolderSecondaryOwner()).isPresent())
+            creditCard.setSecondaryOwner(accountHolderRepository.findById(creditCardDTO.idAccountHolderSecondaryOwner()).get());
+        else
+            creditCard.setSecondaryOwner(null);
+
+        return new ResponseEntity<>(creditCardRepository.save(creditCard), HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<CreditCard> updateCreditCardAccount(Long id, CreditCard creditCard) {
+        CreditCard creditCard1 = creditCardRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado el credit-card para actualizar"));
+
+        if (creditCard.getBalance() != null &&
+                !Objects.equals(creditCard1.getBalance(), creditCard.getBalance())) {
+            creditCard1.setBalance(creditCard.getBalance());
+        }
+
+        if (creditCard.getPenaltyFee() != null &&
+                !Objects.equals(creditCard1.getPenaltyFee(), creditCard.getPenaltyFee())) {
+            creditCard1.setPenaltyFee(creditCard.getPenaltyFee());
+        }
+
+        if (creditCard.getCreatedDate() != null &&
+                !Objects.equals(creditCard1.getCreatedDate(), creditCard.getCreatedDate())) {
+            creditCard1.setCreatedDate(creditCard.getCreatedDate());
+        }
+
+        if (creditCard.getUpdateDate() != null &&
+                !Objects.equals(creditCard1.getUpdateDate(), creditCard.getUpdateDate())) {
+            creditCard1.setUpdateDate(creditCard.getUpdateDate());
+        }
+
+        if (creditCard1.isDeleted() != creditCard.isDeleted()) {
+            creditCard1.setDeleted(creditCard.isDeleted());
+        }
+
+        if (creditCard.getCreditLimit() != null &&
+                !Objects.equals(creditCard1.getCreditLimit(), creditCard.getCreditLimit())) {
+            creditCard1.setCreditLimit(creditCard.getCreditLimit());
+        }
+
+        if (creditCard.getInterestRate() != null &&
+                !Objects.equals(creditCard1.getInterestRate(), creditCard.getInterestRate())) {
+            creditCard1.setInterestRate(creditCard.getInterestRate());
+        }
+
+        return new ResponseEntity<>(creditCardRepository.save(creditCard1), HttpStatus.ACCEPTED);
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteCreditCardAccount(Long idCreditCard) {
+        if (creditCardRepository.findById(idCreditCard).isEmpty())
+            throw new IllegalStateException("No se ha encontrado el Credit-Card con el ID: " + idCreditCard);
+
+        creditCardRepository.deleteById(idCreditCard);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -269,22 +397,6 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     //------------------ SAVING ---------------------
-    @Override
-    public ResponseEntity<Savings> addNewSavingAccount(SavingsDTO savingsDTO) {
-
-        Savings savings = savingsDTOMapper.map(savingsDTO);
-
-        if (accountHolderRepository.findById(savingsDTO.idAccountHolderPrimaryOwner()).isEmpty())
-            throw new IllegalStateException("No se ha encontrado el id de la cuenta primaria");
-        savings.setPrimaryOwner(accountHolderRepository.findById(savingsDTO.idAccountHolderPrimaryOwner()).get());
-
-        if (savingsDTO.idAccountHolderSecondaryOwner() != null && accountHolderRepository.findById(savingsDTO.idAccountHolderSecondaryOwner()).isPresent())
-            savings.setSecondaryOwner(accountHolderRepository.findById(savingsDTO.idAccountHolderSecondaryOwner()).get());
-        else
-            savings.setSecondaryOwner(null);
-
-        return new ResponseEntity<>(savingsAccountRepository.save(savings), HttpStatus.CREATED);
-    }
 
     //--------------------- CREDIT-CARD ---------------------
     @Override

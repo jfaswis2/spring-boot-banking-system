@@ -48,10 +48,10 @@ public class AccountController {
         return accountService.getAllSecondaryOwnerSavings(id);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/savings/{id}")
     @Operation(summary = "Get Savings")
     public ResponseEntity<Savings> getSavings(@PathVariable Long id) {
-        return accountService.getSavings(id);
+        return accountService.getSavingsAccount(id);
     }
 
     @PostMapping("/add/savings")
@@ -62,16 +62,54 @@ public class AccountController {
 
     @PutMapping("/update/savings/{id}")
     @Operation(summary = "Update Savings Account")
-    public ResponseEntity<Savings> updateSavingsAccount(@RequestBody Savings savings, @PathVariable Long id) {
-        return accountService.updateSavings(id, savings);
+    public ResponseEntity<Savings> updateSavings(@RequestBody Savings savings, @PathVariable Long id) {
+        return accountService.updateSavingsAccount(id, savings);
     }
 
     @DeleteMapping("/delete/savings/{id}")
     @Operation(summary = "Delete Savings Account")
-    public ResponseEntity<Void> deleteSavingsAccount(@PathVariable Long id) {
-        return accountService.deleteSavings(id);
+    public ResponseEntity<Void> deleteSavings(@PathVariable Long id) {
+        return accountService.deleteSavingsAccount(id);
     }
 
+
+    //------------------------ CREDIT-CARD -----------------------------
+
+    @GetMapping("/all/credit-card/primary/{id}")
+    @Operation(summary = "Get all Primary Owner Credit-Card")
+    public ResponseEntity<List<CreditCard>> getAllPrimaryOwnerCreditCard(@PathVariable Long id) {
+        return accountService.getAllPrimaryOwnerCreditCard(id);
+    }
+
+    @GetMapping("/all/credit-card/secondary/{id}")
+    @Operation(summary = "Get all Secondary Owner Credit-Card")
+    public ResponseEntity<List<CreditCard>> getAllSecondaryOwnerCreditCard(@PathVariable Long id) {
+        return accountService.getAllSecondaryOwnerCreditCard(id);
+    }
+
+    @GetMapping("/credit-card/{id}")
+    @Operation(summary = "Get Credit-Card")
+    public ResponseEntity<CreditCard> getCreditCard(@PathVariable Long id) {
+        return accountService.getCreditCardAccount(id);
+    }
+
+    @PostMapping("/add/credit-card")
+    @Operation(summary = "Add new Credit-Card Account")
+    public ResponseEntity<CreditCard> addNewCreditCardAccount(@RequestBody CreditCardDTO creditCardDTO) {
+        return accountService.addNewCreditCardAccount(creditCardDTO);
+    }
+
+    @PutMapping("/update/credit-card/{id}")
+    @Operation(summary = "Update Credit-Card Account")
+    public ResponseEntity<CreditCard> updateCreditCardAccount(@RequestBody CreditCard creditCard, @PathVariable Long id) {
+        return accountService.updateCreditCardAccount(id, creditCard);
+    }
+
+    @DeleteMapping("/delete/credit-card/{id}")
+    @Operation(summary = "Delete Credit-Card Account")
+    public ResponseEntity<Void> deleteCreditCardAccount(@PathVariable Long id) {
+        return accountService.deleteCreditCardAccount(id);
+    }
 
 /*
     @GetMapping("/primary/{idAccountHolder}/{idAccount}")
