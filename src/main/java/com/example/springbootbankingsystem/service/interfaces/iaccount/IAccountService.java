@@ -25,10 +25,10 @@ public interface IAccountService {
     //---------------------- STUDENT-CHECKING -----------------------
     ResponseEntity<List<StudentChecking>> getAllPrimaryOwnerStudentChecking(Long idAccountHolder);
     ResponseEntity<List<StudentChecking>> getAllSecondaryOwnerStudentChecking(Long idAccountHolder);
-    ResponseEntity<StudentChecking> getStudentChecking(Long idStudentChecking);
-    ResponseEntity<?> addNewStudentChecking(StudentCheckingDTO checkingDTO);
-    ResponseEntity<StudentChecking> updateStudentChecking(Long id, StudentChecking studentChecking);
-    ResponseEntity<Void> deleteStudentChecking(Long idStudentChecking);
+    ResponseEntity<StudentChecking> getStudentCheckingAccount(Long idStudentChecking);
+    ResponseEntity<?> addNewStudentCheckingAccount(StudentCheckingDTO checkingDTO);
+    ResponseEntity<StudentChecking> updateStudentCheckingAccount(Long id, StudentChecking studentChecking);
+    ResponseEntity<Void> deleteStudentCheckingAccount(Long idStudentChecking);
 
     //----------------- SAVINGS -------------------------
     ResponseEntity<List<Savings>> getAllPrimaryOwnerSavings(Long idAccountHolder);

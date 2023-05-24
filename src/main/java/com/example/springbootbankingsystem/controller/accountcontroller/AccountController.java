@@ -34,6 +34,45 @@ public class AccountController {
         return accountService.getAllSecondaryOwnerChecking(id);
     }*/
 
+    //------------------------ STUDENT-CHECKING ----------------------
+    @GetMapping("/all/student-checking/primary/{id}")
+    @Operation(summary = "Get all Primary Owner Student Checking")
+    public ResponseEntity<List<StudentChecking>> getAllPrimaryOwnerStudentChecking(@PathVariable Long id) {
+        return accountService.getAllPrimaryOwnerStudentChecking(id);
+    }
+
+    @GetMapping("/all/student-checking/secondary/{id}")
+    @Operation(summary = "Get all Secondary Owner Student Checking")
+    public ResponseEntity<List<StudentChecking>> getAllSecondaryOwnerStudentChecking(@PathVariable Long id) {
+        return accountService.getAllSecondaryOwnerStudentChecking(id);
+    }
+
+    @GetMapping("/student-checking/{id}")
+    @Operation(summary = "Get Student Checking")
+    public ResponseEntity<StudentChecking> getStudentCheckingAccount(@PathVariable Long id) {
+        return accountService.getStudentCheckingAccount(id);
+    }
+
+    @PostMapping("/add/student-checking")
+    @Operation(summary = "Add new Student Checking Account")
+    public ResponseEntity<?> addNewStudentCheckingAccount(@RequestBody StudentCheckingDTO studentCheckingDTO) {
+        return accountService.addNewStudentCheckingAccount(studentCheckingDTO);
+    }
+
+    @PutMapping("/update/student-checking/{id}")
+    @Operation(summary = "Update Student Checking Account")
+    public ResponseEntity<StudentChecking> updateStudentCheckingAccount(@RequestBody StudentChecking studentChecking,
+                                                                        @PathVariable Long id) {
+        return accountService.updateStudentCheckingAccount(id, studentChecking);
+    }
+
+    @DeleteMapping("/delete/student-checking/{id}")
+    @Operation(summary = "Delete Student Checking Account")
+    public ResponseEntity<Void> deleteStudentCheckingAccount(@PathVariable Long id) {
+        return accountService.deleteStudentCheckingAccount(id);
+    }
+
+
 
     //---------------------- SAVINGS -------------------------
     @GetMapping("/all/savings/primary/{id}")

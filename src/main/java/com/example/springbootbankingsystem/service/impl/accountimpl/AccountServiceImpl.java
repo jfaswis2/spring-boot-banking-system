@@ -9,6 +9,7 @@ import com.example.springbootbankingsystem.mapper.accountmapper.CreditCardDTOMap
 import com.example.springbootbankingsystem.mapper.accountmapper.SavingsDTOMapper;
 import com.example.springbootbankingsystem.mapper.accountmapper.StudentCheckingDTOMapper;
 import com.example.springbootbankingsystem.model.accounttypes.*;
+import com.example.springbootbankingsystem.model.usertypes.AccountHolder;
 import com.example.springbootbankingsystem.repository.accountrepository.CheckingRepository;
 import com.example.springbootbankingsystem.repository.accountrepository.CreditCardRepository;
 import com.example.springbootbankingsystem.repository.accountrepository.SavingsRepository;
@@ -98,36 +99,193 @@ public class AccountServiceImpl implements IAccountService {
         return null;
     }
 
-    //----------------------- STUDENT-CHECKING -------------------------- TODO
+    //----------------------- STUDENT-CHECKING --------------------------
     @Override
     public ResponseEntity<List<StudentChecking>> getAllPrimaryOwnerStudentChecking(Long idAccountHolder) {
-        return null;
+        List<StudentChecking> studentCheckingList = accountHolderRepository.findById(idAccountHolder)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con el id " + idAccountHolder))
+                .getPrimaryOwnerStudentCheckingList()
+                .stream()
+                .sorted(Comparator.comparingLong(StudentChecking::getId))
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(studentCheckingList, HttpStatus.FOUND);
     }
 
     @Override
     public ResponseEntity<List<StudentChecking>> getAllSecondaryOwnerStudentChecking(Long idAccountHolder) {
-        return null;
+        List<StudentChecking> studentCheckingList = accountHolderRepository.findById(idAccountHolder)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con el id " + idAccountHolder))
+                .getSecondaryOwnerStudentCheckingList()
+                .stream()
+                .sorted(Comparator.comparingLong(StudentChecking::getId))
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(studentCheckingList, HttpStatus.FOUND);
     }
 
     @Override
-    public ResponseEntity<StudentChecking> getStudentChecking(Long idStudentChecking) {
-        return null;
+    public ResponseEntity<StudentChecking> getStudentCheckingAccount(Long idStudentChecking) {
+        StudentChecking studentChecking = studentCheckingRepository.findById(idStudentChecking)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado el Student-Checking con el id " + idStudentChecking));
+        return new ResponseEntity<>(studentChecking, HttpStatus.FOUND);
     }
 
     @Override
-    public ResponseEntity<?> addNewStudentChecking(StudentCheckingDTO checkingDTO) {
-        return null;
+    public ResponseEntity<?> addNewStudentCheckingAccount(StudentCheckingDTO studentCheckingDTO) {
+        StudentChecking studentChecking = studentCheckingDTOMapper.map(studentCheckingDTO);
+
+        AccountHolder accountHolder = accountHolderRepository.findById(studentCheckingDTO.idAccountHolderPrimaryOwner())
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con ese ID"));
+
+        LocalDate dateOfBirth = accountHolder.getDateOfBirth();
+
+        if (dateOfBirth.isAfter(fechaMinima))
+            studentChecking.setPrimaryOwner(accountHolder);
+        else
+            throw new IllegalStateException("La edad máxima es de 23 años");
+
+        if (studentCheckingDTO.idAccountHolderSecondaryOwner() != null && accountHolderRepository.findById(studentCheckingDTO.idAccountHolderSecondaryOwner()).isPresent())
+            studentChecking.setSecondaryOwner(accountHolderRepository.findById(studentCheckingDTO.idAccountHolderSecondaryOwner()).get());
+        else
+            studentChecking.setSecondaryOwner(null);
+
+        return new ResponseEntity<>(studentCheckingRepository.save(studentChecking), HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<StudentChecking> updateStudentChecking(Long id, StudentChecking studentChecking) {
-        return null;
+    public ResponseEntity<StudentChecking> updateStudentCheckingAccount(Long id, StudentChecking studentChecking) {
+        StudentChecking studentChecking1 = studentCheckingRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado el savings para actualizar"));
+
+        if (studentChecking.getSecretKey() != null &&
+                studentChecking.getSecretKey().length() > 0 &&
+                !Objects.equals(studentChecking1.getSecretKey(), studentChecking.getSecretKey())){
+            studentChecking1.setSecretKey(studentChecking.getSecretKey());
+        }
+
+        if (studentChecking.getBalance() != null &&
+                !Objects.equals(studentChecking1.getBalance(), studentChecking.getBalance())){
+            studentChecking1.setBalance(studentChecking.getBalance());
+        }
+
+        if (studentChecking.getStatus() != null &&
+                !Objects.equals(studentChecking1.getStatus(), studentChecking.getStatus())){
+            studentChecking1.setStatus(studentChecking.getStatus());
+        }
+
+        if (studentChecking.getPenaltyFee() != null &&
+                !Objects.equals(studentChecking1.getPenaltyFee(), studentChecking.getPenaltyFee())){
+            studentChecking1.setPenaltyFee(studentChecking.getPenaltyFee());
+        }
+
+        if (studentChecking.getCreatedDate() != null &&
+                !Objects.equals(studentChecking1.getCreatedDate(), studentChecking.getCreatedDate())){
+            studentChecking1.setCreatedDate(studentChecking.getCreatedDate());
+        }
+
+        if (studentChecking.getUpdateDate() != null &&
+                !Objects.equals(studentChecking1.getUpdateDate(), studentChecking.getUpdateDate())){
+            studentChecking1.setUpdateDate(studentChecking.getUpdateDate());
+        }
+
+        if (studentChecking1.isDeleted() != studentChecking.isDeleted()){
+            studentChecking1.setStatus(studentChecking.getStatus());
+        }
+
+        return new ResponseEntity<>(studentCheckingRepository.save(studentChecking1), HttpStatus.ACCEPTED);
     }
 
     @Override
-    public ResponseEntity<Void> deleteStudentChecking(Long idStudentChecking) {
-        return null;
+    public ResponseEntity<Void> deleteStudentCheckingAccount(Long idStudentChecking) {
+        if (studentCheckingRepository.findById(idStudentChecking).isEmpty())
+            throw new IllegalStateException("No se ha encontrado el Credit-Card con el ID: " + idStudentChecking);
+        studentCheckingRepository.deleteById(idStudentChecking);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    /*
+
+    //----------------------- CHECKING --------------------------
+    @Override
+    public ResponseEntity<?> addNewChecking(CheckingDTO checkingDTO) {
+        Checking checking = checkingDTOMapper.map(checkingDTO);
+
+        AccountHolder accountHolder = accountHolderRepository.findById(checkingDTO.idAccountHolderPrimaryOwner())
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con ese ID"));
+
+        LocalDate dateOfBirth = accountHolder.getDateOfBirth();
+
+        if (!dateOfBirth.isAfter(fechaMinima)) {
+            checking.setPrimaryOwner(accountHolder);
+        }
+        else {
+            StudentCheckingDTO studentCheckingDTO = StudentCheckingDTO.builder()
+                    .balance(checkingDTO.balance())
+                    .secretKey(checkingDTO.secretKey())
+                    .idAccountHolderPrimaryOwner(checkingDTO.idAccountHolderPrimaryOwner())
+                    .idAccountHolderSecondaryOwner(checkingDTO.idAccountHolderSecondaryOwner())
+                    .build();
+
+            return addNewStudentChecking(studentCheckingDTO);
+        }
+
+        if (checkingDTO.idAccountHolderSecondaryOwner() != null && accountHolderRepository.findById(checkingDTO.idAccountHolderSecondaryOwner()).isPresent())
+            checking.setSecondaryOwner(accountHolderRepository.findById(checkingDTO.idAccountHolderSecondaryOwner()).get());
+        else
+            checking.setSecondaryOwner(null);
+
+        return new ResponseEntity<>(checkingRepository.save(checking), HttpStatus.CREATED);
+    }
+
+    //------------------------ STUDENT-CHECKING -------------------------
+    @Override
+    public ResponseEntity<?> addNewStudentChecking(StudentCheckingDTO studentCheckingDTO) {
+        StudentChecking studentChecking = studentCheckingDTOMapper.map(studentCheckingDTO);
+
+        AccountHolder accountHolder = accountHolderRepository.findById(studentCheckingDTO.idAccountHolderPrimaryOwner())
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con ese ID"));
+
+        LocalDate dateOfBirth = accountHolder.getDateOfBirth();
+
+        if (dateOfBirth.isAfter(fechaMinima))
+            studentChecking.setPrimaryOwner(accountHolder);
+        else
+            throw new IllegalStateException("La edad máxima es de 23 años");
+
+        if (studentCheckingDTO.idAccountHolderSecondaryOwner() != null && accountHolderRepository.findById(studentCheckingDTO.idAccountHolderSecondaryOwner()).isPresent())
+            studentChecking.setSecondaryOwner(accountHolderRepository.findById(studentCheckingDTO.idAccountHolderSecondaryOwner()).get());
+        else
+            studentChecking.setSecondaryOwner(null);
+
+        return new ResponseEntity<>(studentCheckingRepository.save(studentChecking), HttpStatus.CREATED);
+    }
+
+
+    //--------------------- OTHER -----------------------------
+    public void chargeMonthlyFee() {
+        LocalDate now = LocalDate.now();
+        List<Checking> checkingAccounts = checkingRepository.findAll();
+
+        for (Checking checking :checkingAccounts) {                     //antes
+            if (checking.getLastMaintenanceFee().plusMonths(1).isBefore(now)) {
+                checking.setLastMaintenanceFee(now);
+                checking.setBalance(checking.getBalance().subtract(checking.getMonthlyMaintenanceFee()));
+            }
+
+            //Si el saldo de la cuenta es menor a 0, se congelará
+            if (checking.getBalance().compareTo(BigDecimal.ZERO) < 0) {
+                checking.setStatus(Status.FROZEN);
+            }
+
+            //Si el saldo de la cuenta es menor al mínimo saldo, se cobrara una multa
+            if (checking.getBalance().compareTo(checking.getMinimumBalance()) < 0) {
+                checking.setBalance(checking.getBalance().subtract(checking.getPenaltyFee()));
+            }
+
+            checking.setUpdateDate(LocalDate.now());
+
+            checkingRepository.save(checking);
+        }
+    }*/
 
     //------------------------------- SAVINGS ----------------------------------
     @Override
@@ -334,167 +492,4 @@ public class AccountServiceImpl implements IAccountService {
         creditCardRepository.deleteById(idCreditCard);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-/*
-    @Override
-    public ResponseEntity<Account> getPrimaryOwnerAccount(Long idAccountHolder, Long idAccount) {
-        List<Account> accountList = accountHolderRepository.findById(idAccountHolder)
-                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta de usuario con el id " + idAccountHolder))
-                .getPrimaryOwnerList();
-
-        Account account = accountList.stream()
-                .filter(account1 -> account1.getId().equals(idAccount))
-                .findFirst().orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con el id " + idAccount));
-
-        return new ResponseEntity<>(account, HttpStatus.FOUND);
-    }
-
-    @Override
-    public ResponseEntity<Account> getSecondaryOwnerAccount(Long idAccountHolder, Long idAccount) {
-        List<Account> accountList = accountHolderRepository.findById(idAccountHolder)
-                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta de usuario con el id " + idAccountHolder))
-                .getSecondaryOwnerList();
-
-        Account account = accountList.stream()
-                .filter(account1 -> account1.getId().equals(idAccount))
-                .findFirst().orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con el id " + idAccount));
-
-        return new ResponseEntity<>(account, HttpStatus.FOUND);
-    }
-
-    //TODO terminar
-    @Override
-    public ResponseEntity<Void> deletePrimaryOwnerAccount(Long idAccountHolder, Long idAccount) {
-        AccountHolder accountHolder = accountHolderRepository.findById(idAccountHolder)
-                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta de usuario con el id " + idAccountHolder));
-
-        List<Account> accountList = accountHolder.getPrimaryOwnerList();
-
-        Account account = accountList.stream()
-                .filter(account1 -> account1.getId().equals(idAccount))
-                .findFirst().orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con el id " + idAccount));
-
-        accountList.remove(accountList.indexOf(account));
-        accountHolder.setPrimaryOwnerList(accountList);
-        accountHolderRepository.save(accountHolder);
-
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
-    }
-
-    @Override
-    public ResponseEntity<Void> deleteSecondaryOwnerAccount(Long idAccountHolder, Long idAccount) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<Void> deleteAllPrimaryOwnerAccount(Long idAccountHolder) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<Void> deleteAllSecondaryOwnerAccount(Long idAccountHolder) {
-        return null;
-    }
-
-    //------------------ SAVING ---------------------
-
-    //--------------------- CREDIT-CARD ---------------------
-    @Override
-    public ResponseEntity<CreditCard> addNewCreditCard(CreditCardDTO creditCardDTO) {
-        CreditCard creditCard = creditCardDTOMapper.map(creditCardDTO);
-
-        if (accountHolderRepository.findById(creditCardDTO.idAccountHolderPrimaryOwner()).isEmpty())
-            throw new IllegalStateException("No se ha encontrado el ID de la cuenta primaria");
-        creditCard.setPrimaryOwner(accountHolderRepository.findById(creditCardDTO.idAccountHolderPrimaryOwner()).get());
-
-        if (creditCardDTO.idAccountHolderSecondaryOwner() != null && accountHolderRepository.findById(creditCardDTO.idAccountHolderSecondaryOwner()).isPresent())
-            creditCard.setSecondaryOwner(accountHolderRepository.findById(creditCardDTO.idAccountHolderSecondaryOwner()).get());
-        else
-            creditCard.setSecondaryOwner(null);
-
-        return new ResponseEntity<>(creditCardRepository.save(creditCard), HttpStatus.CREATED);
-    }
-
-    //----------------------- CHECKING --------------------------
-    @Override
-    public ResponseEntity<?> addNewChecking(CheckingDTO checkingDTO) {
-        Checking checking = checkingDTOMapper.map(checkingDTO);
-
-        AccountHolder accountHolder = accountHolderRepository.findById(checkingDTO.idAccountHolderPrimaryOwner())
-                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con ese ID"));
-
-        LocalDate dateOfBirth = accountHolder.getDateOfBirth();
-
-        if (!dateOfBirth.isAfter(fechaMinima)) {
-            checking.setPrimaryOwner(accountHolder);
-        }
-        else {
-            StudentCheckingDTO studentCheckingDTO = StudentCheckingDTO.builder()
-                    .balance(checkingDTO.balance())
-                    .secretKey(checkingDTO.secretKey())
-                    .idAccountHolderPrimaryOwner(checkingDTO.idAccountHolderPrimaryOwner())
-                    .idAccountHolderSecondaryOwner(checkingDTO.idAccountHolderSecondaryOwner())
-                    .build();
-
-            return addNewStudentChecking(studentCheckingDTO);
-        }
-
-        if (checkingDTO.idAccountHolderSecondaryOwner() != null && accountHolderRepository.findById(checkingDTO.idAccountHolderSecondaryOwner()).isPresent())
-            checking.setSecondaryOwner(accountHolderRepository.findById(checkingDTO.idAccountHolderSecondaryOwner()).get());
-        else
-            checking.setSecondaryOwner(null);
-
-        return new ResponseEntity<>(checkingRepository.save(checking), HttpStatus.CREATED);
-    }
-
-    //------------------------ STUDENT-CHECKING -------------------------
-    @Override
-    public ResponseEntity<?> addNewStudentChecking(StudentCheckingDTO studentCheckingDTO) {
-        StudentChecking studentChecking = studentCheckingDTOMapper.map(studentCheckingDTO);
-
-        AccountHolder accountHolder = accountHolderRepository.findById(studentCheckingDTO.idAccountHolderPrimaryOwner())
-                .orElseThrow(() -> new IllegalStateException("No se ha encontrado la cuenta con ese ID"));
-
-        LocalDate dateOfBirth = accountHolder.getDateOfBirth();
-
-        if (dateOfBirth.isAfter(fechaMinima))
-            studentChecking.setPrimaryOwner(accountHolder);
-        else
-            throw new IllegalStateException("La edad máxima es de 23 años");
-
-        if (studentCheckingDTO.idAccountHolderSecondaryOwner() != null && accountHolderRepository.findById(studentCheckingDTO.idAccountHolderSecondaryOwner()).isPresent())
-            studentChecking.setSecondaryOwner(accountHolderRepository.findById(studentCheckingDTO.idAccountHolderSecondaryOwner()).get());
-        else
-            studentChecking.setSecondaryOwner(null);
-
-        return new ResponseEntity<>(studentCheckingRepository.save(studentChecking), HttpStatus.CREATED);
-    }
-
-
-    //--------------------- OTHER -----------------------------
-    public void chargeMonthlyFee() {
-        LocalDate now = LocalDate.now();
-        List<Checking> checkingAccounts = checkingRepository.findAll();
-
-        for (Checking checking :checkingAccounts) {                     //antes
-            if (checking.getLastMaintenanceFee().plusMonths(1).isBefore(now)) {
-                checking.setLastMaintenanceFee(now);
-                checking.setBalance(checking.getBalance().subtract(checking.getMonthlyMaintenanceFee()));
-            }
-
-            //Si el saldo de la cuenta es menor a 0, se congelará
-            if (checking.getBalance().compareTo(BigDecimal.ZERO) < 0) {
-                checking.setStatus(Status.FROZEN);
-            }
-
-            //Si el saldo de la cuenta es menor al mínimo saldo, se cobrara una multa
-            if (checking.getBalance().compareTo(checking.getMinimumBalance()) < 0) {
-                checking.setBalance(checking.getBalance().subtract(checking.getPenaltyFee()));
-            }
-
-            checking.setUpdateDate(LocalDate.now());
-
-            checkingRepository.save(checking);
-        }
-    }*/
 }
