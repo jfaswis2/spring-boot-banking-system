@@ -21,18 +21,43 @@ public class AccountController {
     private final AccountServiceImpl accountService;
 
 
-
-    //--------------------------- CHECKING -------------------------
-    /*
+    //-------------------------- CHECKING ----------------------------------
     @GetMapping("/all/checking/primary/{id}")
+    @Operation(summary = "Get all Primary Owner Checking")
     public ResponseEntity<List<Checking>> getAllPrimaryOwnerChecking(@PathVariable Long id) {
         return accountService.getAllPrimaryOwnerChecking(id);
     }
 
     @GetMapping("/all/checking/secondary/{id}")
+    @Operation(summary = "Get all Secondary Owner Checking")
     public ResponseEntity<List<Checking>> getAllSecondaryOwnerChecking(@PathVariable Long id) {
         return accountService.getAllSecondaryOwnerChecking(id);
-    }*/
+    }
+
+    @GetMapping("/checking/{id}")
+    @Operation(summary = "Get Checking")
+    public ResponseEntity<Checking> getCheckingAccount(@PathVariable Long id) {
+        return accountService.getCheckingAccount(id);
+    }
+
+    @PostMapping("/add/checking")
+    @Operation(summary = "Add new Checking Account")
+    public ResponseEntity<?> addNewCheckingAccount(@RequestBody CheckingDTO checkingDTO) {
+        return accountService.addNewCheckingAccount(checkingDTO);
+    }
+
+    @PutMapping("/update/checking/{id}")
+    @Operation(summary = "Update Checking Account")
+    public ResponseEntity<Checking> updateCheckingAccount(@RequestBody Checking checking,
+                                                                        @PathVariable Long id) {
+        return accountService.updateCheckingAccount(id, checking);
+    }
+
+    @DeleteMapping("/delete/checking/{id}")
+    @Operation(summary = "Delete Checking Account")
+    public ResponseEntity<Void> deleteCheckingAccount(@PathVariable Long id) {
+        return accountService.deleteCheckingAccount(id);
+    }
 
     //------------------------ STUDENT-CHECKING ----------------------
     @GetMapping("/all/student-checking/primary/{id}")
@@ -71,8 +96,6 @@ public class AccountController {
     public ResponseEntity<Void> deleteStudentCheckingAccount(@PathVariable Long id) {
         return accountService.deleteStudentCheckingAccount(id);
     }
-
-
 
     //---------------------- SAVINGS -------------------------
     @GetMapping("/all/savings/primary/{id}")

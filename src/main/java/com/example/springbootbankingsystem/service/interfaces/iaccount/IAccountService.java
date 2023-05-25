@@ -16,11 +16,10 @@ public interface IAccountService {
     //--------------- CHECKING ----------------------
     ResponseEntity<List<Checking>> getAllPrimaryOwnerChecking(Long idAccountHolder);
     ResponseEntity<List<Checking>> getAllSecondaryOwnerChecking(Long idAccountHolder);
-    ResponseEntity<Checking> getPrimaryOwnerChecking(Long idChecking);
-    ResponseEntity<Checking> getSecondaryOwnerChecking(Long idChecking);
-    ResponseEntity<?> addNewChecking(CheckingDTO checkingDTO);
-    ResponseEntity<Checking> updateChecking(Checking checking);
-    ResponseEntity<Void> deleteChecking(Long idChecking);
+    ResponseEntity<Checking> getCheckingAccount(Long idChecking);
+    ResponseEntity<?> addNewCheckingAccount(CheckingDTO checkingDTO);
+    ResponseEntity<Checking> updateCheckingAccount(Long id, Checking checking);
+    ResponseEntity<Void> deleteCheckingAccount(Long idChecking);
 
     //---------------------- STUDENT-CHECKING -----------------------
     ResponseEntity<List<StudentChecking>> getAllPrimaryOwnerStudentChecking(Long idAccountHolder);
