@@ -27,9 +27,7 @@ import java.util.Optional;
 public class UserServiceImpl implements IUserService {
 
     private final AccountHolderRepository accountHolderRepository;
-
     private final AccountHolderDTOMapper accountHolderDTOMapper;
-
     private final AdminRepository adminRepository;
     private final AdminDTOMapper adminDTOMapper;
 

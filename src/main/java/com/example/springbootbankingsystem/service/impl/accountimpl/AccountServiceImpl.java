@@ -272,6 +272,7 @@ public class AccountServiceImpl implements IAccountService {
     public ResponseEntity<Void> deleteStudentCheckingAccount(Long idStudentChecking) {
         if (studentCheckingRepository.findById(idStudentChecking).isEmpty())
             throw new IllegalStateException("No se ha encontrado el Credit-Card con el ID: " + idStudentChecking);
+
         studentCheckingRepository.deleteById(idStudentChecking);
         return new ResponseEntity<>(HttpStatus.OK);
     }
