@@ -38,12 +38,13 @@ public class UserServiceImpl implements IUserService {
     public ResponseEntity<AccountHolder> addNewAccountHolder(AccountHolderDTO accountHolderDTO) {
         Optional<AccountHolder> accountHolderOptional = accountHolderRepository
                 .findAccountHolderByEmail(accountHolderDTO.email());
+
         if (accountHolderOptional.isPresent()) {
             throw new IllegalStateException("Ya hay un email vinculado a esta cuenta ACCOUNT-HOLDER");
         }
 
-        return new ResponseEntity<>(accountHolderRepository.save(accountHolderDTOMapper
-                .map(accountHolderDTO)), HttpStatus.CREATED);
+        return new ResponseEntity<>(accountHolderRepository.save(accountHolderDTOMapper.map(accountHolderDTO)),
+                HttpStatus.CREATED);
     }
 
     @Override
@@ -94,7 +95,6 @@ public class UserServiceImpl implements IUserService {
             if (accountHolderOptional.isPresent()) {
                 throw new IllegalStateException("El nuevo email ya ha sido vinculado a otra cuenta");
             }
-
             accountHolder1.setEmail(accountHolderDTO.email());
         }
 

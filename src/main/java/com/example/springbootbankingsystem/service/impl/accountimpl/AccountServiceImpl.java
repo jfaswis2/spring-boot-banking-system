@@ -16,11 +16,13 @@ import com.example.springbootbankingsystem.repository.accountrepository.SavingsR
 import com.example.springbootbankingsystem.repository.accountrepository.StudentCheckingRepository;
 import com.example.springbootbankingsystem.repository.userrepository.AccountHolderRepository;
 import com.example.springbootbankingsystem.service.interfaces.iaccount.IAccountService;
+import com.example.springbootbankingsystem.utils.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -48,7 +50,7 @@ public class AccountServiceImpl implements IAccountService {
     LocalDate fechaActual = LocalDate.now();
     LocalDate fechaMinima = fechaActual.minusYears(24);
 
-    //------------------ CHECKING ------------------------ TODO
+    //------------------ CHECKING ------------------------
     @Override
     public ResponseEntity<List<Checking>> getAllPrimaryOwnerChecking(Long idAccountHolder) {
         List<Checking> checkingList = accountHolderRepository.findById(idAccountHolder)
@@ -274,36 +276,6 @@ public class AccountServiceImpl implements IAccountService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    /*
-
-
-    //--------------------- OTHER -----------------------------
-    public void chargeMonthlyFee() {
-        LocalDate now = LocalDate.now();
-        List<Checking> checkingAccounts = checkingRepository.findAll();
-
-        for (Checking checking :checkingAccounts) {                     //antes
-            if (checking.getLastMaintenanceFee().plusMonths(1).isBefore(now)) {
-                checking.setLastMaintenanceFee(now);
-                checking.setBalance(checking.getBalance().subtract(checking.getMonthlyMaintenanceFee()));
-            }
-
-            //Si el saldo de la cuenta es menor a 0, se congelará
-            if (checking.getBalance().compareTo(BigDecimal.ZERO) < 0) {
-                checking.setStatus(Status.FROZEN);
-            }
-
-            //Si el saldo de la cuenta es menor al mínimo saldo, se cobrara una multa
-            if (checking.getBalance().compareTo(checking.getMinimumBalance()) < 0) {
-                checking.setBalance(checking.getBalance().subtract(checking.getPenaltyFee()));
-            }
-
-            checking.setUpdateDate(LocalDate.now());
-
-            checkingRepository.save(checking);
-        }
-    }*/
-
     //------------------------------- SAVINGS ----------------------------------
     @Override
     public ResponseEntity<List<Savings>> getAllPrimaryOwnerSavings(Long idAccountHolder) {
@@ -444,6 +416,9 @@ public class AccountServiceImpl implements IAccountService {
 
     @Override
     public ResponseEntity<CreditCard> addNewCreditCardAccount(CreditCardDTO creditCardDTO) {
+
+
+
         CreditCard creditCard = creditCardDTOMapper.map(creditCardDTO);
 
         if (accountHolderRepository.findById(creditCardDTO.idAccountHolderPrimaryOwner()).isEmpty())
@@ -508,5 +483,32 @@ public class AccountServiceImpl implements IAccountService {
 
         creditCardRepository.deleteById(idCreditCard);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    //--------------------- OTHER -----------------------------
+    public void chargeMonthlyFee() {
+        LocalDate now = LocalDate.now();
+        List<Checking> checkingAccounts = checkingRepository.findAll();
+
+        for (Checking checking :checkingAccounts) {                     //antes
+            if (checking.getLastMaintenanceFee().plusMonths(1).isBefore(now)) {
+                checking.setLastMaintenanceFee(now);
+                checking.setBalance(checking.getBalance().subtract(checking.getMonthlyMaintenanceFee()));
+            }
+
+            //Si el saldo de la cuenta es menor a 0, se congelará
+            if (checking.getBalance().compareTo(BigDecimal.ZERO) < 0) {
+                checking.setStatus(Status.FROZEN);
+            }
+
+            //Si el saldo de la cuenta es menor al mínimo saldo, se cobrara una multa
+            if (checking.getBalance().compareTo(checking.getMinimumBalance()) < 0) {
+                checking.setBalance(checking.getBalance().subtract(checking.getPenaltyFee()));
+            }
+
+            checking.setUpdateDate(LocalDate.now());
+
+            checkingRepository.save(checking);
+        }
     }
 }
