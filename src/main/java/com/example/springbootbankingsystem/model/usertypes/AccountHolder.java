@@ -1,10 +1,9 @@
 package com.example.springbootbankingsystem.model.usertypes;
 
 import com.example.springbootbankingsystem.model.accounttypes.*;
+import com.example.springbootbankingsystem.utils.Role;
 import jakarta.annotation.Nullable;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -17,8 +16,20 @@ import java.util.List;
 @Setter
 @Table(name = "t_accountholder_users")
 @RequiredArgsConstructor
-public class AccountHolder extends User{
+public class AccountHolder{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    private String email;
+    private String password;
+    private LocalDate createdDate;
+    private LocalDate updateDate;
+    private boolean deleted;
     private LocalDate dateOfBirth;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @OneToMany(mappedBy = "primaryOwner")
     private List<Checking> primaryOwnerCheckingList;

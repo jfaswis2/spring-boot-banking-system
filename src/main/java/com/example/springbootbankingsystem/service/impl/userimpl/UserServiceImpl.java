@@ -5,6 +5,7 @@ import com.example.springbootbankingsystem.dto.userdto.AdminDTO;
 import com.example.springbootbankingsystem.dto.userdto.ThirdPartyDTO;
 import com.example.springbootbankingsystem.mapper.usermapper.AccountHolderDTOMapper;
 import com.example.springbootbankingsystem.mapper.usermapper.AdminDTOMapper;
+import com.example.springbootbankingsystem.model.accounttypes.CreditCard;
 import com.example.springbootbankingsystem.model.usertypes.AccountHolder;
 import com.example.springbootbankingsystem.model.usertypes.Admin;
 import com.example.springbootbankingsystem.model.usertypes.ThirdParty;
@@ -117,32 +118,87 @@ public class UserServiceImpl implements IUserService {
     //----------------------- ADMIN --------------------------------
     @Override
     public ResponseEntity<Admin> addNewAdmin(AdminDTO adminDTO) {
-        Optional<Admin> adminOptional = adminRepository.findAccountHolderByEmail(adminDTO.email());
+        Optional<Admin> adminOptional = adminRepository.findAdminByEmail(adminDTO.email());
         if (adminOptional.isPresent()) {
             throw new IllegalStateException("Ya hay un email vinculado a esta cuenta ADMIN");
         }
-
         return new ResponseEntity<>(adminRepository.save(adminDTOMapper.map(adminDTO)), HttpStatus.CREATED);
     }
 
     @Override
     public ResponseEntity<Admin> getAdmin(Long id) {
-        return null;
+        Admin admin = adminRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado el admin con el id " + id));
+        return new ResponseEntity<>(admin, HttpStatus.FOUND);
     }
 
     @Override
     public ResponseEntity<List<Admin>> getAllAdmin() {
-        return null;
+        List<Admin> adminList = adminRepository.findAll();
+
+        return new ResponseEntity<>(adminList, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<Admin> updateAdmin(Admin admin) {
-        return null;
+    public ResponseEntity<Admin> updateAdmin(Long id, Admin admin) {
+        Admin admin1 = adminRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado el admin para actualizar"));
+
+        if (admin.getName() != null &&
+                admin.getName().length() > 0 &&
+                !Objects.equals(admin1.getName(), admin.getName())) {
+            admin1.setName(admin.getName());
+        }
+
+        if (admin.getEmail() != null &&
+                admin.getEmail().length() > 0 &&
+                !Objects.equals(admin1.getEmail(), admin.getEmail())){
+
+            Optional<Admin> optionalAdmin = adminRepository.findAdminByEmail(admin.getEmail());
+
+            if (optionalAdmin.isPresent())
+                throw new IllegalStateException("El nuevo email ya ha sido vinculado a otra cuenta admin");
+
+            admin1.setEmail(admin.getEmail());
+        }
+
+        if (admin.getPassword() != null &&
+                admin.getPassword().length() > 0 &&
+                !Objects.equals(admin1.getPassword(), admin.getPassword())) {
+            admin1.setPassword(admin.getPassword());
+        }
+
+        if (admin.getCreatedDate() != null &&
+                !Objects.equals(admin1.getCreatedDate(), admin.getCreatedDate())) {
+            admin1.setCreatedDate(admin.getCreatedDate());
+        }
+
+        if (admin.getUpdateDate() != null &&
+                !Objects.equals(admin1.getUpdateDate(), admin.getUpdateDate())) {
+            admin1.setUpdateDate(admin.getUpdateDate());
+        }
+
+        if (admin1.isDeleted() != admin.isDeleted()) {
+            admin1.setDeleted(admin.isDeleted());
+        }
+
+        if (admin.getRole() != null &&
+                !Objects.equals(admin1.getRole(), admin.getRole())) {
+            admin1.setRole(admin.getRole());
+        }
+
+        return new ResponseEntity<>(adminRepository.save(admin1), HttpStatus.ACCEPTED);
     }
 
     @Override
     public ResponseEntity<Void> deleteAdmin(Long id) {
-        return null;
+        Admin admin = adminRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("No se ha encontrado una cuenta admin con ese ID"));
+
+        admin.setDeleted(true);
+
+        adminRepository.save(admin);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     //----------------------- THIRD-PARTY -----------------------------

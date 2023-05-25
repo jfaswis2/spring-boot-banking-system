@@ -15,15 +15,15 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class ThirdParty{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String password;
     private String hashedKey;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
     private LocalDate createdDate;
     private LocalDate updateDate;
     private boolean deleted;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

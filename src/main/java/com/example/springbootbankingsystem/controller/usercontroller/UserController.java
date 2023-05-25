@@ -27,13 +27,13 @@ public class UserController {
         return userService.addNewAccountHolder(accountHolderDTO);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/account-holder/{id}")
     @Operation(summary = "Get AccountHolder")
     public ResponseEntity<AccountHolder> getAccountHolder(@PathVariable Long id) {
         return userService.getAccountHolder(id);
     }
 
-    @GetMapping
+    @GetMapping("/all/account-holder")
     @Operation(summary = "Get all AccountHolder")
     public ResponseEntity<List<AccountHolder>> getAllAccountHolder() {
         return userService.getAllAccountHolder();
@@ -57,6 +57,31 @@ public class UserController {
     @Operation(summary = "Register new Admin")
     public ResponseEntity<Admin> registerNewAdmin(@RequestBody AdminDTO adminDTO) {
         return userService.addNewAdmin(adminDTO);
+    }
+
+    @GetMapping("/admin/{id}")
+    @Operation(summary = "Get Admin")
+    public ResponseEntity<Admin> getAdmin(@PathVariable Long id) {
+        return userService.getAdmin(id);
+    }
+
+    @GetMapping("/all/admin")
+    @Operation(summary = "Get all Admin")
+    public ResponseEntity<List<Admin>> getAllAdmin() {
+        return userService.getAllAdmin();
+    }
+
+    @PutMapping("/update/admin/{id}")
+    @Operation(summary = "Update Admin")
+    public ResponseEntity<Admin> updateAdmin(@PathVariable Long id,
+                                                             @RequestBody Admin admin) {
+        return userService.updateAdmin(id, admin);
+    }
+
+    @DeleteMapping("/delete/admin/{id}")
+    @Operation(summary = "Delete Admin")
+    public ResponseEntity<Void> deleteAdmin(@PathVariable Long id) {
+        return userService.deleteAdmin(id);
     }
 
     //--------------------- THIRD-PARTY -----------------------------

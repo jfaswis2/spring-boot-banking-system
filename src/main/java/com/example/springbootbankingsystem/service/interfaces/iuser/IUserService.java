@@ -30,7 +30,7 @@ public interface IUserService {
 
     ResponseEntity<List<Admin>> getAllAdmin();
 
-    ResponseEntity<Admin> updateAdmin(Admin admin);
+    ResponseEntity<Admin> updateAdmin(Long id, Admin admin);
 
     ResponseEntity<Void> deleteAdmin(Long id);
 

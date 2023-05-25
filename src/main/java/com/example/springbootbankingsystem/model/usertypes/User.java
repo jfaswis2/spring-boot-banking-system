@@ -15,6 +15,8 @@ import java.time.LocalDate;
 @Setter
 @RequiredArgsConstructor
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+
+//TODO ELIMINAR CLASE
 public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
