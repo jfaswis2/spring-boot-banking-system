@@ -1,12 +1,15 @@
 package com.example.springbootbankingsystem.service.impl.accountimpl;
 
 import com.example.springbootbankingsystem.dto.accountdto.SavingsDTO;
-import com.example.springbootbankingsystem.dto.userdto.AccountHolderDTO;
+import com.example.springbootbankingsystem.dto.accountdto.StudentCheckingDTO;
 import com.example.springbootbankingsystem.mapper.accountmapper.SavingsDTOMapper;
+import com.example.springbootbankingsystem.mapper.accountmapper.StudentCheckingDTOMapper;
 import com.example.springbootbankingsystem.mapper.usermapper.AccountHolderDTOMapper;
 import com.example.springbootbankingsystem.model.accounttypes.Savings;
+import com.example.springbootbankingsystem.model.accounttypes.StudentChecking;
 import com.example.springbootbankingsystem.model.usertypes.AccountHolder;
 import com.example.springbootbankingsystem.repository.accountrepository.SavingsRepository;
+import com.example.springbootbankingsystem.repository.accountrepository.StudentCheckingRepository;
 import com.example.springbootbankingsystem.repository.userrepository.AccountHolderRepository;
 import com.example.springbootbankingsystem.utils.Status;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -36,10 +38,13 @@ class AccountServiceImplTest {
     private SavingsDTOMapper savingsDTOMapper;
 
     @Mock
-    private AccountHolderDTOMapper accountHolderDTOMapper;
+    private SavingsRepository savingsRepository;
 
     @Mock
-    private SavingsRepository savingsRepository;
+    private StudentCheckingDTOMapper studentCheckingDTOMapper;
+
+    @Mock
+    private StudentCheckingRepository studentCheckingRepository;
 
     @InjectMocks
     private AccountServiceImpl accountServiceImpl;
@@ -86,7 +91,114 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void addNewStudentCheckingAccount() {
+    void addNewStudentCheckingAccountPrimaryOwnerAndSecondaryOwnerExists() {
+        StudentCheckingDTO studentCheckingDTO = new StudentCheckingDTO(
+                1L,
+                1L,
+                "asdasdas",
+                BigDecimal.valueOf(10000)
+        );
+
+        StudentChecking expectedStudentChecking = new StudentChecking();
+        expectedStudentChecking.setSecretKey(studentCheckingDTO.secretKey());
+        expectedStudentChecking.setBalance(studentCheckingDTO.balance());
+        expectedStudentChecking.setPenaltyFee(BigDecimal.valueOf(40L));
+        expectedStudentChecking.setStatus(Status.ACTIVE);
+        expectedStudentChecking.setCreatedDate(LocalDate.now());
+        expectedStudentChecking.setUpdateDate(LocalDate.now());
+        expectedStudentChecking.setDeleted(false);
+
+        AccountHolder accountHolder = new AccountHolder();
+        accountHolder.setDateOfBirth(LocalDate.of(2010, 1, 1));
+
+        when(studentCheckingDTOMapper.map(any(StudentCheckingDTO.class))).thenReturn(expectedStudentChecking);
+        when(accountHolderRepository.findById(1L)).thenReturn(Optional.of(accountHolder));
+        when(studentCheckingRepository.save(any(StudentChecking.class))).thenReturn(expectedStudentChecking);
+
+        ResponseEntity<?> response = accountServiceImpl.addNewStudentCheckingAccount(studentCheckingDTO);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(expectedStudentChecking, response.getBody());
+        verify(studentCheckingRepository, times(1)).save(any(StudentChecking.class));
+    }
+
+    @Test
+    void addNewStudentCheckingAccountPrimaryOwnerExistAndSecondaryOwnerNull() {
+        StudentCheckingDTO studentCheckingDTO = new StudentCheckingDTO(
+                1L,
+                null,
+                "asdasdas",
+                BigDecimal.valueOf(10000)
+        );
+
+        StudentChecking expectedStudentChecking = new StudentChecking();
+        expectedStudentChecking.setSecretKey(studentCheckingDTO.secretKey());
+        expectedStudentChecking.setBalance(studentCheckingDTO.balance());
+        expectedStudentChecking.setPenaltyFee(BigDecimal.valueOf(40L));
+        expectedStudentChecking.setStatus(Status.ACTIVE);
+        expectedStudentChecking.setCreatedDate(LocalDate.now());
+        expectedStudentChecking.setUpdateDate(LocalDate.now());
+        expectedStudentChecking.setDeleted(false);
+
+        AccountHolder accountHolder = new AccountHolder();
+        accountHolder.setDateOfBirth(LocalDate.of(2010, 1, 1));
+
+        when(studentCheckingDTOMapper.map(any(StudentCheckingDTO.class))).thenReturn(expectedStudentChecking);
+        when(accountHolderRepository.findById(1L)).thenReturn(Optional.of(accountHolder));
+        when(studentCheckingRepository.save(any(StudentChecking.class))).thenReturn(expectedStudentChecking);
+
+        ResponseEntity<?> response = accountServiceImpl.addNewStudentCheckingAccount(studentCheckingDTO);
+
+        StudentChecking studentChecking = (StudentChecking) response.getBody();
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(expectedStudentChecking, response.getBody());
+        assertNull(studentChecking.getSecondaryOwner());
+        verify(studentCheckingRepository, times(1)).save(any(StudentChecking.class));
+    }
+
+    @Test
+    void addNewStudentCheckingAccountPrimaryOwnerNonExist() {
+        StudentCheckingDTO studentCheckingDTO = new StudentCheckingDTO(
+                1L,
+                null,
+                "asdasdas",
+                BigDecimal.valueOf(10000)
+        );
+
+        when(accountHolderRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalStateException.class, () -> accountServiceImpl.addNewStudentCheckingAccount(studentCheckingDTO));
+        verify(studentCheckingRepository, never()).save(any(StudentChecking.class));
+    }
+
+    @Test
+    void addNewStudentCheckingAccountPrimaryOwnerNonStudent() {
+        StudentCheckingDTO studentCheckingDTO = new StudentCheckingDTO(
+                1L,
+                1L,
+                "asdasdas",
+                BigDecimal.valueOf(10000)
+        );
+
+        StudentChecking expectedStudentChecking = new StudentChecking();
+        expectedStudentChecking.setSecretKey(studentCheckingDTO.secretKey());
+        expectedStudentChecking.setBalance(studentCheckingDTO.balance());
+        expectedStudentChecking.setPenaltyFee(BigDecimal.valueOf(40L));
+        expectedStudentChecking.setStatus(Status.ACTIVE);
+        expectedStudentChecking.setCreatedDate(LocalDate.now());
+        expectedStudentChecking.setUpdateDate(LocalDate.now());
+        expectedStudentChecking.setDeleted(false);
+
+        AccountHolder accountHolder = new AccountHolder();
+        accountHolder.setDateOfBirth(LocalDate.of(1997, 3, 2));
+
+        when(studentCheckingDTOMapper.map(any(StudentCheckingDTO.class))).thenReturn(expectedStudentChecking);
+        when(accountHolderRepository.findById(1L)).thenReturn(Optional.of(accountHolder));
+        when(studentCheckingRepository.save(any(StudentChecking.class))).thenReturn(expectedStudentChecking);
+
+        assertThrows(IllegalStateException.class, () -> accountServiceImpl.addNewStudentCheckingAccount(studentCheckingDTO));
+        verify(studentCheckingRepository, never()).save(any(StudentChecking.class));
     }
 
     @Test
