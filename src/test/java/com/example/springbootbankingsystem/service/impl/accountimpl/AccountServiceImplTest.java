@@ -22,8 +22,11 @@ import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -54,6 +57,7 @@ class AccountServiceImplTest {
         MockitoAnnotations.openMocks(this);
     }
 
+    //----------------------- CHECKING --------------------------
     @Test
     void getAllPrimaryOwnerChecking() {
     }
@@ -78,6 +82,7 @@ class AccountServiceImplTest {
     void deleteCheckingAccount() {
     }
 
+    //------------------------- STUDENT-CHECKING ----------------------
     @Test
     void getAllPrimaryOwnerStudentChecking() {
     }
@@ -209,8 +214,33 @@ class AccountServiceImplTest {
     void deleteStudentCheckingAccount() {
     }
 
+    //------------------- SAVINGS -----------------------------
     @Test
     void getAllPrimaryOwnerSavings() {
+
+        Long accountHolderId = 1L;
+        AccountHolder accountHolder = new AccountHolder();
+        accountHolder.setId(accountHolderId);
+        List<Savings> savingsList = new ArrayList<>();
+        Savings savings1 = new Savings();
+        savings1.setId(1L);
+        savingsList.add(savings1);
+        Savings savings2 = new Savings();
+        savings2.setId(2L);
+        savingsList.add(savings2);
+        accountHolder.setPrimaryOwnerSavingsList(savingsList);
+
+        when(accountHolderRepository.findById(accountHolderId)).thenReturn(Optional.of(accountHolder));
+
+        ResponseEntity<List<Savings>> response = accountServiceImpl.getAllPrimaryOwnerSavings(accountHolderId);
+
+        assertEquals(HttpStatus.FOUND, response.getStatusCode());
+        List<Savings> resultSavingsList = response.getBody();
+        assertEquals(2, resultSavingsList.size());
+        assertEquals(1L, resultSavingsList.get(0).getId());
+        assertEquals(2L, resultSavingsList.get(1).getId());
+
+        verify(accountHolderRepository, times(1)).findById(accountHolderId);
     }
 
     @Test
@@ -313,6 +343,7 @@ class AccountServiceImplTest {
     void deleteSavingsAccount() {
     }
 
+    //---------------------- CREDIT-CARD ------------------------
     @Test
     void getAllPrimaryOwnerCreditCard() {
     }
