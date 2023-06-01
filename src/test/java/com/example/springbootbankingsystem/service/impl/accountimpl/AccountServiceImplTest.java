@@ -410,7 +410,57 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void updateSavingsAccount() {
+    void updateSavingsAccountExistingId() {
+
+        Long id = 1L;
+        Savings existingSavings = new Savings();
+        existingSavings.setId(id);
+        existingSavings.setBalance(BigDecimal.valueOf(1000));
+        existingSavings.setSecretKey("oldSecretKey");
+        existingSavings.setStatus(Status.ACTIVE);
+        existingSavings.setPenaltyFee(BigDecimal.valueOf(50));
+        existingSavings.setCreatedDate(LocalDate.now());
+        existingSavings.setUpdateDate(LocalDate.now());
+        existingSavings.setDeleted(false);
+        existingSavings.setMinimumBalance(BigDecimal.valueOf(1000));
+        existingSavings.setInterestRate(BigDecimal.valueOf(0.0025));
+
+        Savings updatedSavings = new Savings();
+        updatedSavings.setId(id);
+        updatedSavings.setBalance(BigDecimal.valueOf(1500));
+        updatedSavings.setSecretKey("newSecretKey");
+        updatedSavings.setStatus(Status.FROZEN);
+        updatedSavings.setPenaltyFee(BigDecimal.valueOf(75));
+        updatedSavings.setCreatedDate(LocalDate.now().minusDays(1));
+        updatedSavings.setUpdateDate(LocalDate.now().minusDays(1));
+        updatedSavings.setDeleted(true);
+        updatedSavings.setMinimumBalance(BigDecimal.valueOf(1000));
+        updatedSavings.setInterestRate(BigDecimal.valueOf(0.005));
+
+        when(savingsRepository.findById(id)).thenReturn(Optional.of(existingSavings));
+        when(savingsRepository.save(existingSavings)).thenReturn(updatedSavings);
+
+        ResponseEntity<Savings> response = accountServiceImpl.updateSavingsAccount(id, updatedSavings);
+
+        assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
+        assertEquals(updatedSavings, response.getBody());
+        verify(savingsRepository, times(1)).findById(id);
+        verify(savingsRepository, times(1)).save(existingSavings);
+    }
+
+    @Test
+    void updateSavingsAccountNonExistingId() {
+        Long id = 1L;
+        Savings updatedSavings = new Savings();
+        updatedSavings.setId(id);
+
+        when(savingsRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalStateException.class, () -> {
+            accountServiceImpl.updateSavingsAccount(id, updatedSavings);
+        });
+        verify(savingsRepository, times(1)).findById(id);
+        verify(savingsRepository, times(0)).save(any());
     }
 
     @Test
