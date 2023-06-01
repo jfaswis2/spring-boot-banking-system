@@ -216,7 +216,7 @@ class AccountServiceImplTest {
 
     //------------------- SAVINGS -----------------------------
     @Test
-    void getAllPrimaryOwnerSavings() {
+    void getAllPrimaryOwnerSavingsExistingId() {
 
         Long accountHolderId = 1L;
         AccountHolder accountHolder = new AccountHolder();
@@ -244,7 +244,18 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void getAllSecondaryOwnerSavings() {
+    void getAllPrimaryOwnerSavingsNonExistingId() {
+        Long idAccountHolder = 1L;
+        when(accountHolderRepository.findById(idAccountHolder)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalStateException.class, () -> {
+            accountServiceImpl.getAllPrimaryOwnerSavings(idAccountHolder);
+        });
+        verify(accountHolderRepository, times(1)).findById(idAccountHolder);
+    }
+
+    @Test
+    void getAllSecondaryOwnerSavingsExistingId() {
 
         Long accountHolderId = 1L;
         AccountHolder accountHolder = new AccountHolder();
@@ -272,7 +283,46 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void getSavingsAccount() {
+    void getAllSecondaryOwnerSavingsNonExistingId() {
+        Long idAccountHolder = 1L;
+        when(accountHolderRepository.findById(idAccountHolder)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalStateException.class, () -> {
+            accountServiceImpl.getAllSecondaryOwnerSavings(idAccountHolder);
+        });
+        verify(accountHolderRepository, times(1)).findById(idAccountHolder);
+    }
+
+    @Test
+    void getSavingsAccountExistingId() {
+        // Arrange
+        Long idSavings = 1L;
+        Savings savings = new Savings();
+        savings.setId(idSavings);
+
+        when(savingsRepository.findById(idSavings)).thenReturn(Optional.of(savings));
+
+        // Act
+        ResponseEntity<Savings> response = accountServiceImpl.getSavingsAccount(idSavings);
+
+        // Assert
+        assertEquals(HttpStatus.FOUND, response.getStatusCode());
+        assertEquals(savings, response.getBody());
+        verify(savingsRepository, times(1)).findById(idSavings);
+    }
+
+    @Test
+    void getSavingsAccountNonExistingId() {
+        // Arrange
+        Long idSavings = 1L;
+
+        when(savingsRepository.findById(idSavings)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(IllegalStateException.class, () -> {
+            accountServiceImpl.getSavingsAccount(idSavings);
+        });
+        verify(savingsRepository, times(1)).findById(idSavings);
     }
 
     @Test
