@@ -245,6 +245,30 @@ class AccountServiceImplTest {
 
     @Test
     void getAllSecondaryOwnerSavings() {
+
+        Long accountHolderId = 1L;
+        AccountHolder accountHolder = new AccountHolder();
+        accountHolder.setId(accountHolderId);
+        List<Savings> savingsList = new ArrayList<>();
+        Savings savings1 = new Savings();
+        savings1.setId(1L);
+        savingsList.add(savings1);
+        Savings savings2 = new Savings();
+        savings2.setId(2L);
+        savingsList.add(savings2);
+        accountHolder.setSecondaryOwnerSavingsList(savingsList);
+
+        when(accountHolderRepository.findById(accountHolderId)).thenReturn(Optional.of(accountHolder));
+
+        ResponseEntity<List<Savings>> response = accountServiceImpl.getAllSecondaryOwnerSavings(accountHolderId);
+
+        assertEquals(HttpStatus.FOUND, response.getStatusCode());
+        List<Savings> resultSavingsList = response.getBody();
+        assertEquals(2, resultSavingsList.size());
+        assertEquals(1L, resultSavingsList.get(0).getId());
+        assertEquals(2L, resultSavingsList.get(1).getId());
+
+        verify(accountHolderRepository, times(1)).findById(accountHolderId);
     }
 
     @Test
