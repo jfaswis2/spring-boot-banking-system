@@ -464,7 +464,29 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void deleteSavingsAccount() {
+    void deleteSavingsAccountExistingId() {
+        Long idChecking = 1L;
+
+        when(savingsRepository.findById(idChecking)).thenReturn(Optional.of(new Savings()));
+
+        ResponseEntity<Void> response = accountServiceImpl.deleteSavingsAccount(idChecking);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(savingsRepository, times(1)).findById(idChecking);
+        verify(savingsRepository, times(1)).deleteById(idChecking);
+    }
+
+    @Test
+    void deleteSavingsAccountNonExistingId() {
+        Long idChecking = 1L;
+
+        when(savingsRepository.findById(idChecking)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalStateException.class, () -> {
+            accountServiceImpl.deleteSavingsAccount(idChecking);
+        });
+        verify(savingsRepository, times(1)).findById(idChecking);
+        verify(savingsRepository, times(0)).deleteById(any());
     }
 
     //---------------------- CREDIT-CARD ------------------------
