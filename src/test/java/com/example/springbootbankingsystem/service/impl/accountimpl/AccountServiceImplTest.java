@@ -2,12 +2,14 @@ package com.example.springbootbankingsystem.service.impl.accountimpl;
 
 import com.example.springbootbankingsystem.dto.accountdto.SavingsDTO;
 import com.example.springbootbankingsystem.dto.accountdto.StudentCheckingDTO;
+import com.example.springbootbankingsystem.mapper.accountmapper.CreditCardDTOMapper;
 import com.example.springbootbankingsystem.mapper.accountmapper.SavingsDTOMapper;
 import com.example.springbootbankingsystem.mapper.accountmapper.StudentCheckingDTOMapper;
 import com.example.springbootbankingsystem.model.accounttypes.CreditCard;
 import com.example.springbootbankingsystem.model.accounttypes.Savings;
 import com.example.springbootbankingsystem.model.accounttypes.StudentChecking;
 import com.example.springbootbankingsystem.model.usertypes.AccountHolder;
+import com.example.springbootbankingsystem.repository.accountrepository.CreditCardRepository;
 import com.example.springbootbankingsystem.repository.accountrepository.SavingsRepository;
 import com.example.springbootbankingsystem.repository.accountrepository.StudentCheckingRepository;
 import com.example.springbootbankingsystem.repository.userrepository.AccountHolderRepository;
@@ -36,17 +38,21 @@ class AccountServiceImplTest {
     @Mock
     private AccountHolderRepository accountHolderRepository;
 
-    @Mock
-    private SavingsDTOMapper savingsDTOMapper;
-
-    @Mock
-    private SavingsRepository savingsRepository;
 
     @Mock
     private StudentCheckingDTOMapper studentCheckingDTOMapper;
-
     @Mock
     private StudentCheckingRepository studentCheckingRepository;
+    @Mock
+    private SavingsDTOMapper savingsDTOMapper;
+    @Mock
+    private SavingsRepository savingsRepository;
+    @Mock
+    private CreditCardDTOMapper creditCardDTOMapper;
+    @Mock
+    private CreditCardRepository creditCardRepository;
+
+
 
     @InjectMocks
     private AccountServiceImpl accountServiceImpl;
@@ -566,7 +572,33 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void getCreditCardAccount() {
+    void getCreditCardAccountExistingId() {
+        Long idCreditCard = 1L;
+        CreditCard creditCard = new CreditCard();
+        creditCard.setId(idCreditCard);
+
+        when(creditCardRepository.findById(idCreditCard)).thenReturn(Optional.of(creditCard));
+
+        // Act
+        ResponseEntity<CreditCard> response = accountServiceImpl.getCreditCardAccount(idCreditCard);
+
+        // Assert
+        assertEquals(HttpStatus.FOUND, response.getStatusCode());
+        assertEquals(creditCard, response.getBody());
+        verify(savingsRepository, times(1)).findById(idCreditCard);
+    }
+
+    @Test
+    void getCreditCardAccountNonExistingId() {
+        Long idCreditCard = 1L;
+
+        when(creditCardRepository.findById(idCreditCard)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(IllegalStateException.class, () -> {
+            accountServiceImpl.getCreditCardAccount(idCreditCard);
+        });
+        verify(creditCardRepository, times(1)).findById(idCreditCard);
     }
 
     @Test
