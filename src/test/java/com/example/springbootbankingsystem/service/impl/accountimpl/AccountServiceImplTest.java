@@ -4,7 +4,7 @@ import com.example.springbootbankingsystem.dto.accountdto.SavingsDTO;
 import com.example.springbootbankingsystem.dto.accountdto.StudentCheckingDTO;
 import com.example.springbootbankingsystem.mapper.accountmapper.SavingsDTOMapper;
 import com.example.springbootbankingsystem.mapper.accountmapper.StudentCheckingDTOMapper;
-import com.example.springbootbankingsystem.mapper.usermapper.AccountHolderDTOMapper;
+import com.example.springbootbankingsystem.model.accounttypes.CreditCard;
 import com.example.springbootbankingsystem.model.accounttypes.Savings;
 import com.example.springbootbankingsystem.model.accounttypes.StudentChecking;
 import com.example.springbootbankingsystem.model.usertypes.AccountHolder;
@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -491,7 +490,41 @@ class AccountServiceImplTest {
 
     //---------------------- CREDIT-CARD ------------------------
     @Test
-    void getAllPrimaryOwnerCreditCard() {
+    void getAllPrimaryOwnerCreditCardExistingId() {
+        Long accountHolderId = 1L;
+        AccountHolder accountHolder = new AccountHolder();
+        accountHolder.setId(accountHolderId);
+        List<CreditCard> creditCardList = new ArrayList<>();
+        CreditCard creditCard1 = new CreditCard();
+        creditCard1.setId(1L);
+        creditCardList.add(creditCard1);
+        CreditCard creditCard2 = new CreditCard();
+        creditCard2.setId(2L);
+        creditCardList.add(creditCard2);
+        accountHolder.setPrimaryOwnerCreditCardList(creditCardList);
+
+        when(accountHolderRepository.findById(accountHolderId)).thenReturn(Optional.of(accountHolder));
+
+        ResponseEntity<List<CreditCard>> response = accountServiceImpl.getAllPrimaryOwnerCreditCard(accountHolderId);
+
+        assertEquals(HttpStatus.FOUND, response.getStatusCode());
+        List<CreditCard> resultCreditCardList = response.getBody();
+        assertEquals(2, resultCreditCardList.size());
+        assertEquals(1L, resultCreditCardList.get(0).getId());
+        assertEquals(2L, resultCreditCardList.get(1).getId());
+
+        verify(accountHolderRepository, times(1)).findById(accountHolderId);
+    }
+
+    @Test
+    void getAllPrimaryOwnerCreditCardNonExistingId() {
+        Long idAccountHolder = 1L;
+        when(accountHolderRepository.findById(idAccountHolder)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalStateException.class, () -> {
+            accountServiceImpl.getAllPrimaryOwnerCreditCard(idAccountHolder);
+        });
+        verify(accountHolderRepository, times(1)).findById(idAccountHolder);
     }
 
     @Test
