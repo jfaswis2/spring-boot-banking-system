@@ -528,7 +528,41 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void getAllSecondaryOwnerCreditCard() {
+    void getAllSecondaryOwnerCreditCardExistingId() {
+        Long accountHolderId = 1L;
+        AccountHolder accountHolder = new AccountHolder();
+        accountHolder.setId(accountHolderId);
+        List<CreditCard> creditCardList = new ArrayList<>();
+        CreditCard creditCard1 = new CreditCard();
+        creditCard1.setId(1L);
+        creditCardList.add(creditCard1);
+        CreditCard creditCard2 = new CreditCard();
+        creditCard2.setId(2L);
+        creditCardList.add(creditCard2);
+        accountHolder.setSecondaryOwnerCreditCardList(creditCardList);
+
+        when(accountHolderRepository.findById(accountHolderId)).thenReturn(Optional.of(accountHolder));
+
+        ResponseEntity<List<CreditCard>> response = accountServiceImpl.getAllSecondaryOwnerCreditCard(accountHolderId);
+
+        assertEquals(HttpStatus.FOUND, response.getStatusCode());
+        List<CreditCard> resultCreditCardList = response.getBody();
+        assertEquals(2, resultCreditCardList.size());
+        assertEquals(1L, resultCreditCardList.get(0).getId());
+        assertEquals(2L, resultCreditCardList.get(1).getId());
+
+        verify(accountHolderRepository, times(1)).findById(accountHolderId);
+    }
+
+    @Test
+    void getAllSecondaryOwnerCreditCardNonExistingId() {
+        Long idAccountHolder = 1L;
+        when(accountHolderRepository.findById(idAccountHolder)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalStateException.class, () -> {
+            accountServiceImpl.getAllSecondaryOwnerCreditCard(idAccountHolder);
+        });
+        verify(accountHolderRepository, times(1)).findById(idAccountHolder);
     }
 
     @Test
