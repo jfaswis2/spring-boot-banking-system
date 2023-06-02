@@ -1,5 +1,6 @@
 package com.example.springbootbankingsystem.service.impl.accountimpl;
 
+import com.example.springbootbankingsystem.dto.accountdto.CreditCardDTO;
 import com.example.springbootbankingsystem.dto.accountdto.SavingsDTO;
 import com.example.springbootbankingsystem.dto.accountdto.StudentCheckingDTO;
 import com.example.springbootbankingsystem.mapper.accountmapper.CreditCardDTOMapper;
@@ -400,7 +401,7 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void addNewSavingAccountPrimaryOwnerNonExiste() {
+    void addNewSavingAccountPrimaryOwnerNonExist() {
         SavingsDTO savingsDTO = new SavingsDTO(
                 1L,
                 null,
@@ -602,7 +603,83 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void addNewCreditCardAccount() {
+    void addNewCreditCardAccountPrimaryOwnerAndSecondaryOwnerExists() {
+        CreditCardDTO creditCardDTO = new CreditCardDTO(
+                1L,
+                1L,
+                BigDecimal.valueOf(10000L),
+                BigDecimal.valueOf(0.2),
+                BigDecimal.valueOf(10000L));
+
+        CreditCard expectedCreditCard = new CreditCard();
+
+        expectedCreditCard.setBalance(creditCardDTO.balance());
+        expectedCreditCard.setInterestRate(creditCardDTO.interestRate());
+        expectedCreditCard.setCreditLimit(creditCardDTO.creditLimit());
+        expectedCreditCard.setPenaltyFee(BigDecimal.valueOf(40L));
+        expectedCreditCard.setCreatedDate(LocalDate.now());
+        expectedCreditCard.setUpdateDate(LocalDate.now());
+        expectedCreditCard.setDeleted(false);
+
+        when(creditCardDTOMapper.map(any(CreditCardDTO.class))).thenReturn(expectedCreditCard);
+
+        when(creditCardRepository.save(any(CreditCard.class))).thenReturn(expectedCreditCard);
+
+        when(accountHolderRepository.findById(1L)).thenReturn(Optional.of(new AccountHolder()));
+
+        ResponseEntity<CreditCard> response = accountServiceImpl.addNewCreditCardAccount(creditCardDTO);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(expectedCreditCard, response.getBody());
+        verify(creditCardRepository, times(1)).save(any(CreditCard.class));
+    }
+
+    @Test
+    void addNewCreditCardAccountPrimaryOwnerExistsAndSecondaryOwnerNull() {
+        CreditCardDTO creditCardDTO = new CreditCardDTO(
+                1L,
+                null,
+                BigDecimal.valueOf(10000L),
+                BigDecimal.valueOf(0.2),
+                BigDecimal.valueOf(10000L));
+
+        CreditCard expectedCreditCard = new CreditCard();
+
+        expectedCreditCard.setBalance(creditCardDTO.balance());
+        expectedCreditCard.setInterestRate(creditCardDTO.interestRate());
+        expectedCreditCard.setCreditLimit(creditCardDTO.creditLimit());
+        expectedCreditCard.setPenaltyFee(BigDecimal.valueOf(40L));
+        expectedCreditCard.setCreatedDate(LocalDate.now());
+        expectedCreditCard.setUpdateDate(LocalDate.now());
+        expectedCreditCard.setDeleted(false);
+
+        when(creditCardDTOMapper.map(any(CreditCardDTO.class))).thenReturn(expectedCreditCard);
+
+        when(creditCardRepository.save(any(CreditCard.class))).thenReturn(expectedCreditCard);
+
+        when(accountHolderRepository.findById(1L)).thenReturn(Optional.of(new AccountHolder()));
+
+        ResponseEntity<CreditCard> response = accountServiceImpl.addNewCreditCardAccount(creditCardDTO);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(expectedCreditCard, response.getBody());
+        assertNull(Objects.requireNonNull(response.getBody()).getSecondaryOwner());
+        verify(creditCardRepository, times(1)).save(any(CreditCard.class));
+    }
+
+    @Test
+    void addNewCreditCardAccountPrimaryOwnerNonExist() {
+        CreditCardDTO creditCardDTO = new CreditCardDTO(
+                1L,
+                null,
+                BigDecimal.valueOf(10000L),
+                BigDecimal.valueOf(0.2),
+                BigDecimal.valueOf(10000L));
+
+        when(accountHolderRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalStateException.class, () -> accountServiceImpl.addNewCreditCardAccount(creditCardDTO));
+        verify(creditCardRepository, never()).save(any(CreditCard.class));
     }
 
     @Test
