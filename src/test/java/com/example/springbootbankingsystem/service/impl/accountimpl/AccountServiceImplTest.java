@@ -732,9 +732,32 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void deleteCreditCardAccount() {
+    void deleteCreditCardAccountExistingId() {
+        Long idCreditCard = 1L;
+
+        when(creditCardRepository.findById(idCreditCard)).thenReturn(Optional.of(new CreditCard()));
+
+        ResponseEntity<Void> response = accountServiceImpl.deleteCreditCardAccount(idCreditCard);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(creditCardRepository, times(1)).findById(idCreditCard);
+        verify(creditCardRepository, times(1)).deleteById(idCreditCard);
     }
 
+    @Test
+    void deleteCreditCardAccountNonExistingId() {
+        Long idCreditCard = 1L;
+
+        when(creditCardRepository.findById(idCreditCard)).thenReturn(Optional.of(new CreditCard()));
+
+        ResponseEntity<Void> response = accountServiceImpl.deleteCreditCardAccount(idCreditCard);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(creditCardRepository, times(1)).findById(idCreditCard);
+        verify(creditCardRepository, times(1)).deleteById(idCreditCard);
+    }
+
+    //-------------------------- OTHERS ---------------------------
     @Test
     void chargeMonthlyFee() {
     }
