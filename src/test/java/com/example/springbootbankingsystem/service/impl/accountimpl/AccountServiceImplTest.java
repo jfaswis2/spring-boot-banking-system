@@ -683,7 +683,52 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void updateCreditCardAccount() {
+    void updateCreditCardAccountExistingId() {
+        Long id = 1L;
+        CreditCard existingCreditCard = new CreditCard();
+        existingCreditCard.setId(id);
+        existingCreditCard.setBalance(BigDecimal.valueOf(1000));
+        existingCreditCard.setPenaltyFee(BigDecimal.valueOf(50));
+        existingCreditCard.setCreatedDate(LocalDate.now());
+        existingCreditCard.setUpdateDate(LocalDate.now());
+        existingCreditCard.setDeleted(false);
+        existingCreditCard.setCreditLimit(BigDecimal.valueOf(10000L));
+        existingCreditCard.setInterestRate(BigDecimal.valueOf(0.0025));
+
+        CreditCard updatedCreditCard = new CreditCard();
+        updatedCreditCard.setId(id);
+        updatedCreditCard.setBalance(BigDecimal.valueOf(1500));
+        updatedCreditCard.setPenaltyFee(BigDecimal.valueOf(75));
+        updatedCreditCard.setCreatedDate(LocalDate.now().minusDays(1));
+        updatedCreditCard.setUpdateDate(LocalDate.now().minusDays(1));
+        updatedCreditCard.setDeleted(true);
+        updatedCreditCard.setCreditLimit(BigDecimal.valueOf(10000L));
+        updatedCreditCard.setInterestRate(BigDecimal.valueOf(0.005));
+
+        when(creditCardRepository.findById(id)).thenReturn(Optional.of(existingCreditCard));
+        when(creditCardRepository.save(existingCreditCard)).thenReturn(updatedCreditCard);
+
+        ResponseEntity<CreditCard> response = accountServiceImpl.updateCreditCardAccount(id, updatedCreditCard);
+
+        assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
+        assertEquals(updatedCreditCard, response.getBody());
+        verify(creditCardRepository, times(1)).findById(id);
+        verify(creditCardRepository, times(1)).save(existingCreditCard);
+    }
+
+    @Test
+    void updateCreditCardAccountNonExistingId() {
+        Long id = 1L;
+        CreditCard updatedCreditCard = new CreditCard();
+        updatedCreditCard.setId(id);
+
+        when(creditCardRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalStateException.class, () -> {
+            accountServiceImpl.updateCreditCardAccount(id, updatedCreditCard);
+        });
+        verify(creditCardRepository, times(1)).findById(id);
+        verify(creditCardRepository, times(0)).save(any());
     }
 
     @Test
