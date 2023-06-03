@@ -418,8 +418,6 @@ public class AccountServiceImpl implements IAccountService {
     @Override
     public ResponseEntity<CreditCard> addNewCreditCardAccount(CreditCardDTO creditCardDTO) {
 
-
-
         CreditCard creditCard = creditCardDTOMapper.map(creditCardDTO);
 
         if (accountHolderRepository.findById(creditCardDTO.idAccountHolderPrimaryOwner()).isEmpty())

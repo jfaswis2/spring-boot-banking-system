@@ -223,8 +223,8 @@ class AccountServiceImplTest {
     //------------------- SAVINGS -----------------------------
     @Test
     void getAllPrimaryOwnerSavingsExistingId() {
-
         Long accountHolderId = 1L;
+
         AccountHolder accountHolder = new AccountHolder();
         accountHolder.setId(accountHolderId);
         List<Savings> savingsList = new ArrayList<>();
@@ -262,8 +262,8 @@ class AccountServiceImplTest {
 
     @Test
     void getAllSecondaryOwnerSavingsExistingId() {
-
         Long accountHolderId = 1L;
+
         AccountHolder accountHolder = new AccountHolder();
         accountHolder.setId(accountHolderId);
         List<Savings> savingsList = new ArrayList<>();
@@ -301,17 +301,15 @@ class AccountServiceImplTest {
 
     @Test
     void getSavingsAccountExistingId() {
-        // Arrange
         Long idSavings = 1L;
+
         Savings savings = new Savings();
         savings.setId(idSavings);
 
         when(savingsRepository.findById(idSavings)).thenReturn(Optional.of(savings));
 
-        // Act
         ResponseEntity<Savings> response = accountServiceImpl.getSavingsAccount(idSavings);
 
-        // Assert
         assertEquals(HttpStatus.FOUND, response.getStatusCode());
         assertEquals(savings, response.getBody());
         verify(savingsRepository, times(1)).findById(idSavings);
@@ -319,12 +317,10 @@ class AccountServiceImplTest {
 
     @Test
     void getSavingsAccountNonExistingId() {
-        // Arrange
         Long idSavings = 1L;
 
         when(savingsRepository.findById(idSavings)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(IllegalStateException.class, () -> {
             accountServiceImpl.getSavingsAccount(idSavings);
         });
@@ -499,6 +495,7 @@ class AccountServiceImplTest {
     @Test
     void getAllPrimaryOwnerCreditCardExistingId() {
         Long accountHolderId = 1L;
+
         AccountHolder accountHolder = new AccountHolder();
         accountHolder.setId(accountHolderId);
         List<CreditCard> creditCardList = new ArrayList<>();
@@ -537,6 +534,7 @@ class AccountServiceImplTest {
     @Test
     void getAllSecondaryOwnerCreditCardExistingId() {
         Long accountHolderId = 1L;
+
         AccountHolder accountHolder = new AccountHolder();
         accountHolder.setId(accountHolderId);
         List<CreditCard> creditCardList = new ArrayList<>();
@@ -564,6 +562,7 @@ class AccountServiceImplTest {
     @Test
     void getAllSecondaryOwnerCreditCardNonExistingId() {
         Long idAccountHolder = 1L;
+
         when(accountHolderRepository.findById(idAccountHolder)).thenReturn(Optional.empty());
 
         assertThrows(IllegalStateException.class, () -> {
@@ -580,13 +579,11 @@ class AccountServiceImplTest {
 
         when(creditCardRepository.findById(idCreditCard)).thenReturn(Optional.of(creditCard));
 
-        // Act
         ResponseEntity<CreditCard> response = accountServiceImpl.getCreditCardAccount(idCreditCard);
 
-        // Assert
         assertEquals(HttpStatus.FOUND, response.getStatusCode());
         assertEquals(creditCard, response.getBody());
-        verify(savingsRepository, times(1)).findById(idCreditCard);
+        verify(creditCardRepository, times(1)).findById(idCreditCard);
     }
 
     @Test
@@ -595,7 +592,6 @@ class AccountServiceImplTest {
 
         when(creditCardRepository.findById(idCreditCard)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(IllegalStateException.class, () -> {
             accountServiceImpl.getCreditCardAccount(idCreditCard);
         });
@@ -622,9 +618,7 @@ class AccountServiceImplTest {
         expectedCreditCard.setDeleted(false);
 
         when(creditCardDTOMapper.map(any(CreditCardDTO.class))).thenReturn(expectedCreditCard);
-
         when(creditCardRepository.save(any(CreditCard.class))).thenReturn(expectedCreditCard);
-
         when(accountHolderRepository.findById(1L)).thenReturn(Optional.of(new AccountHolder()));
 
         ResponseEntity<CreditCard> response = accountServiceImpl.addNewCreditCardAccount(creditCardDTO);
@@ -654,9 +648,7 @@ class AccountServiceImplTest {
         expectedCreditCard.setDeleted(false);
 
         when(creditCardDTOMapper.map(any(CreditCardDTO.class))).thenReturn(expectedCreditCard);
-
         when(creditCardRepository.save(any(CreditCard.class))).thenReturn(expectedCreditCard);
-
         when(accountHolderRepository.findById(1L)).thenReturn(Optional.of(new AccountHolder()));
 
         ResponseEntity<CreditCard> response = accountServiceImpl.addNewCreditCardAccount(creditCardDTO);
@@ -702,7 +694,7 @@ class AccountServiceImplTest {
         updatedCreditCard.setCreatedDate(LocalDate.now().minusDays(1));
         updatedCreditCard.setUpdateDate(LocalDate.now().minusDays(1));
         updatedCreditCard.setDeleted(true);
-        updatedCreditCard.setCreditLimit(BigDecimal.valueOf(10000L));
+        updatedCreditCard.setCreditLimit(BigDecimal.valueOf(100L));
         updatedCreditCard.setInterestRate(BigDecimal.valueOf(0.005));
 
         when(creditCardRepository.findById(id)).thenReturn(Optional.of(existingCreditCard));
@@ -748,13 +740,13 @@ class AccountServiceImplTest {
     void deleteCreditCardAccountNonExistingId() {
         Long idCreditCard = 1L;
 
-        when(creditCardRepository.findById(idCreditCard)).thenReturn(Optional.of(new CreditCard()));
+        when(creditCardRepository.findById(idCreditCard)).thenReturn(Optional.empty());
 
-        ResponseEntity<Void> response = accountServiceImpl.deleteCreditCardAccount(idCreditCard);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThrows(IllegalStateException.class, () -> {
+            accountServiceImpl.deleteCreditCardAccount(idCreditCard);
+        });
         verify(creditCardRepository, times(1)).findById(idCreditCard);
-        verify(creditCardRepository, times(1)).deleteById(idCreditCard);
+        verify(creditCardRepository, times(0)).deleteById(any());
     }
 
     //-------------------------- OTHERS ---------------------------
