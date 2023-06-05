@@ -168,7 +168,31 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void getStudentCheckingAccount() {
+    void getStudentCheckingAccountExistingId() {
+        Long idStudentChecking = 1L;
+
+        StudentChecking studentChecking = new StudentChecking();
+        studentChecking.setId(idStudentChecking);
+
+        when(studentCheckingRepository.findById(idStudentChecking)).thenReturn(Optional.of(studentChecking));
+
+        ResponseEntity<StudentChecking> response = accountServiceImpl.getStudentCheckingAccount(idStudentChecking);
+
+        assertEquals(HttpStatus.FOUND, response.getStatusCode());
+        assertEquals(studentChecking, response.getBody());
+        verify(studentCheckingRepository, times(1)).findById(idStudentChecking);
+    }
+
+    @Test
+    void getStudentCheckingAccountNonExistingId() {
+        Long idSavings = 1L;
+
+        when(savingsRepository.findById(idSavings)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalStateException.class, () -> {
+            accountServiceImpl.getSavingsAccount(idSavings);
+        });
+        verify(savingsRepository, times(1)).findById(idSavings);
     }
 
     @Test
