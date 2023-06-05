@@ -90,7 +90,7 @@ class AccountServiceImplTest {
 
     //------------------------- STUDENT-CHECKING ----------------------
     @Test
-    void getAllPrimaryOwnerStudentChecking() {
+    void getAllPrimaryOwnerStudentCheckingExistingId() {
         Long accountHolderId = 1L;
 
         AccountHolder accountHolder = new AccountHolder();
@@ -115,6 +115,17 @@ class AccountServiceImplTest {
         assertEquals(2L, resultStudentCheckingList.get(1).getId());
 
         verify(accountHolderRepository, times(1)).findById(accountHolderId);
+    }
+
+    @Test
+    void getAllPrimaryOwnerStudentCheckingNonExistingId() {
+        Long idAccountHolder = 1L;
+        when(accountHolderRepository.findById(idAccountHolder)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalStateException.class, () -> {
+            accountServiceImpl.getAllPrimaryOwnerStudentChecking(idAccountHolder);
+        });
+        verify(accountHolderRepository, times(1)).findById(idAccountHolder);
     }
 
     @Test
