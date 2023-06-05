@@ -91,6 +91,30 @@ class AccountServiceImplTest {
     //------------------------- STUDENT-CHECKING ----------------------
     @Test
     void getAllPrimaryOwnerStudentChecking() {
+        Long accountHolderId = 1L;
+
+        AccountHolder accountHolder = new AccountHolder();
+        accountHolder.setId(accountHolderId);
+        List<StudentChecking> studentCheckingList = new ArrayList<>();
+        StudentChecking studentChecking1 = new StudentChecking();
+        studentChecking1.setId(1L);
+        studentCheckingList.add(studentChecking1);
+        StudentChecking studentChecking2 = new StudentChecking();
+        studentChecking2.setId(2L);
+        studentCheckingList.add(studentChecking2);
+        accountHolder.setPrimaryOwnerStudentCheckingList(studentCheckingList);
+
+        when(accountHolderRepository.findById(accountHolderId)).thenReturn(Optional.of(accountHolder));
+
+        ResponseEntity<List<StudentChecking>> response = accountServiceImpl.getAllPrimaryOwnerStudentChecking(accountHolderId);
+
+        assertEquals(HttpStatus.FOUND, response.getStatusCode());
+        List<StudentChecking> resultStudentCheckingList = response.getBody();
+        assertEquals(2, resultStudentCheckingList.size());
+        assertEquals(1L, resultStudentCheckingList.get(0).getId());
+        assertEquals(2L, resultStudentCheckingList.get(1).getId());
+
+        verify(accountHolderRepository, times(1)).findById(accountHolderId);
     }
 
     @Test
